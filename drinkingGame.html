@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>SE Project</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <script src="js/libs/jquery/jquery-2.1.4.min.js"></script>
+        
+        <script src="js/libs/knockout/knockout-3.3.0.js"></script>
+        
+        <script src="js/libs/bootstrap/js/bootstrap.min.js"></script>
+        <link href="js/libs/bootstrap/css/bootstrap.css" rel="stylesheet">
+        
+        <script src="js/libs/dragula/dragula.js"></script>
+        <link href ="js/libs/dragula/dragula.min.css" rel="stylesheet">
+        
+    </head>
+    <body>
+        <br>
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-2 col-sm-4 col-xs-6">
+                    <h2>Categories</h2>
+                    
+<!--                    <ul class="nav nav-pills nav-stacked">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#">Menu 1</a></li>
+                        <li><a href="#">Menu 2</a></li>
+                        <li><a href="#">Menu 3</a></li>
+                    </ul>-->
+                    
+                    <ul data-bind="foreach:games" class="nav nav-pills nav-stacked">
+                        
+                        <li class="active" data-bind="if: $parent.selectedCategory() == $index()">
+                            <a href="#" style="width:100%" data-bind="text: category, click: $parent.changeCategory"></a>
+                        </li>
+                        
+                        <li data-bind="if: $parent.selectedCategory() != $index()">
+                            <a href="#" style="width:100%" data-bind="text: category, click: $parent.changeCategory"></a>
+                        </li>
+                    </ul>
+                    
+                </div>
+
+                <div class="col-md-8">
+                    <div class="jumbotron">
+                        <h1>Drink!</h1>
+                        <hr>
+                        <h3 id = "DrinkingCommand"></h3><br>
+                        <button class="btn btn-primary btn-lg" data-bind="click: getGameBasedOnCategory">Different One</button>
+                    </div>
+                    
+                    <div>
+                        <h3>Contribute your own game to the category of <span data-bind="text: selectedCategoryName"></span></h3>
+                        <textarea class="form-control"></textarea>
+                    </div>
+                    
+                </div>
+
+            </div>
+        </div>
+        
+        <script>
+            
+            var games = [
+                {
+                    "category": "Programming",
+                    "games":[
+                        "Every time you find a debug statement you don't know what it was for.",
+                        "Every time stack overflow saves you.",
+                        "Every time he uses Java as an example"
+                    ]
+                },
+                {
+                    "category": "Dark Souls",
+                    "games":[
+                        "Every time you fall off a cliff.",
+                        "Every time you get a parry correct."
+                    ]
+                },
+                {
+                    "category": "Waffle House",
+                    "games":[
+                        "Every time you order a double burger and get a single burger",
+                        "Every time the waitress cries",
+                        "Every time they hand you your food without your silverware",
+                        "Every time you have to wash your hands after using their menu"
+                    ]
+                }
+            ];
+            
+            
+            
+            function ViewModel(games){
+                
+                var self = this;
+                
+                self.games = games;
+                
+                self.selectedCategory = ko.observable(0);
+
+                self.selectedCategoryName = ko.computed(function(){
+                    return games[self.selectedCategory()].category;
+                },self);
+        
+                self.changeCategory = function(category){
+                    
+                    for(var i = 0; i < self.games.length; i ++){
+                        
+                        if(self.games[i] === category){
+                            self.selectedCategory (i);
+                        }
+                        
+                    }
+                    
+                    self.getGameBasedOnCategory();
+                    
+                };
+                
+            
+                self.getGameBasedOnCategory = function(){
+                    var index = Math.floor(Math.random()*games[self.selectedCategory()].games.length);
+                    document.getElementById("DrinkingCommand").innerHTML = games[self.selectedCategory()].games[index];
+                };
+                
+               
+                
+                self.getGameBasedOnCategory();
+            
+            }
+            
+            ko.applyBindings(new ViewModel(games));
+            
+        </script>
+
+        
+    </body>
+    
+    
+    
+</html>

@@ -4,6 +4,9 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
+
+
+<!--http://www.rio2016.com/sites/default/files/users/rio2016_files/guia_ingressoing_2015_daily_0.pdf-->
 <html>
     <head>
         <title>SE Project</title>
@@ -17,8 +20,315 @@ and open the template in the editor.
         <script src="js/libs/bootstrap/js/bootstrap.min.js"></script>
         <link href="js/libs/bootstrap/css/bootstrap.css" rel="stylesheet">
         
+        <script src="js/libs/dragula/dragula.js"></script>
+        <link href ="js/libs/dragula/dragula.min.css" rel="stylesheet">
+        
+        <script src ="js/database.js"></script>
+        
+        <style>
+            .horizMod{
+                margin-top: 5px;
+            }
+            .colMod{
+                padding-right: 0px;
+                padding-left: 0px;
+            }
+             th, td { min-width: 200px; 
+    vertical-align: top;
+             }
+             /*tr {position: fixed;}*/
+        </style>
+        
     </head>
     <body>
-        <div>TODO write content</div>
+   
+        <div class="row">
+
+            <div class="col-sm-8">
+                <div style="overflow:auto; width: 100%;">
+                <table >
+                    <tr id="eventDays" >
+                        
+                    </tr>
+                </table>
+                    </div>
+            </div>
+            
+            <div class="col-sm-4">
+                
+                <h1>Create Event</h1>
+                
+                <b>Sport</b><br/>
+                <select id='sportCreation' class="form-control">
+                    <option>Archery</option>
+                    <option>Basketball</option>
+                    <option>Beach Volleyball</option>
+                    <option>Cycling</option>
+                    <option>Diving</option>
+                    <option>Equestrian</option>
+                    <option>Fencing</option>
+                    <option>Football</option>
+                    <option>Gymnastics</option>
+                    <option>Hockey</option>
+                    <option>Swimming</option>
+                    <option>Tennis</option>
+                    <option>Triathlon</option>
+                    <option>Weightlifting</option>
+                </select>
+                
+                <br />
+                <b>Location</b>
+                <select id='locationCreation' class='form-control'>
+                    <option>Olympic Stadium</option>
+                </select>
+                
+                <br/>
+                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Create</button>
+                <br />
+                <br />
+                <div id="createdEvents" style="width:100%">
+                </div>
+                
+                
+<!--                <h1>Request Security</h1>
+                <b>Location:</b>
+                <select id='locationCreation' class='form-control'>
+                    <option>Olympic Stadium</option>
+                </select>
+                
+                <br />
+                <b>Reason: </b>
+                <textarea class="form-control" placeholder="Enter reason for security request..."></textarea>
+                <br/>
+                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Request</button>
+                <br />
+                <br />
+                
+                
+                
+                <h1>Request Free Ticket</h1>
+                <b>Event:</b>
+                <select id='locationCreation' class='form-control'>
+                    <option>Archery - 9 a.m. August 6th</option>
+                </select>
+                <br/>
+                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Request</button>
+                <br />
+                <br />
+                
+                
+                <h1>Purchase Ticket</h1>
+                <b>Event:</b>
+                <select id='locationCreation' class='form-control'>
+                    <option>90$ - Archery - 9 a.m. August 6th</option>
+                </select>
+                <br/>
+                
+                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Purchase</button>
+                <br />
+                <br />
+                
+                
+                <h1>Notifications</h1>
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Request!</strong> An Athlete has requested an autographing session at 13:00 in the Stadium.
+                </div>
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Event Change!</strong> Archery event has been moved from x to x.
+                </div>
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Approved!</strong> Your security request has been approved!
+                </div>
+                <br />
+                
+                
+                
+                <h1>Assign Security To Event</h1>
+                
+                <b>Event:</b>
+                <select id='locationCreation' class='form-control'>
+                    <option>Archery - 9 a.m. August 6th</option>
+                </select>
+                <br/>
+                
+                <b>Security:</b>
+                <select id='locationCreation' class='form-control'>
+                    <option>Guard 1</option>
+                </select>
+                <br />
+                
+                <b>Equipment:</b>
+                <select id='locationCreation' class='form-control'>
+                    <option>Gun</option>
+                </select>
+                <br/>
+                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Assign</button>
+                <br />
+                <br />
+                
+                <h1>Request Autographing</h1>
+                <b>Location:</b>
+                <select id='locationCreation' class='form-control'>
+                    <option>Olympic Stadium</option>
+                </select>
+                
+                <br />
+                <b>Date and Time:</b>
+                <input type="date" name="bday">
+                <input type="time" name="usr_time">
+                <br/>
+                <br/>
+                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Request</button>
+                <br />
+                <br />
+                
+                
+                <h1>About You</h1>
+                <b>Birth:</b> <input type="date" name="bday" class="form-control">
+                
+                <br />
+                <b>Name</b>
+                <input class="form-control" placeholder="Name">
+                <br />
+                <b>About You</b>
+                <textarea class="form-control" ></textarea>
+                <br/>
+                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Update</button>
+                <br />
+                
+                <br />
+                
+                <h1>Assign Athletes To Event</h1>
+                <b>Event:</b>
+                <select id='locationCreation' class='form-control'>
+                    <option>Archery - 9 a.m. August 6th</option>
+                </select>
+                <br/>
+                <div class="row">
+                    
+                    <div class="col-sm-3">
+                        <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                        Athlete
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a href="#">Another Athlete</a></li>
+                        <li><a href="#">Another Athlete</a></li>
+                        <li><a href="#">Another Athlete</a></li>
+                        <li><a href="#">Another Athlete</a></li>
+                    </ul>
+                </div>
+                    </div>
+                    
+                    <div class="col-sm-9">
+                        <div class="alert alert-warning alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>Russia</strong> Josh
+                        </div>
+                        <div class="alert alert-warning alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>West Korea</strong> Jeffery 
+                        </div>
+                        <div class="alert alert-warning alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>USA</strong> Eli
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()" style="width:100%">Update</button>
+                <br />-->
+                
+                
+            </div>
+            
+        </div>
+        
+        <script>
+            
+            initialize();
+            
+            function initialize(){
+                
+                database = getDatabase();
+                
+                var dragulaSpaces = [];
+                
+                for(var i = 0; i < database.getEventDays().length; i ++){
+                    
+                    var ele = document.createElement("td");
+                    
+
+                    ele.setAttribute("class", "panel panel-default");
+                    
+                    //Panel Heading
+                    var heading = document.createElement("div");
+                    heading.setAttribute("class","panel-heading");
+                    heading.innerHTML = "<h3 class='panel-title'>"+database.getEventDays()[i].name+"</h3>";
+                    
+                    //Panel Body
+                    var body = document.createElement("div");
+                    body.setAttribute("class","panel-body");
+                    
+                    document.getElementById("eventDays").appendChild(ele);
+                    ele.appendChild(heading);
+                    ele.appendChild(body);
+                    
+                    for(var t = 9; t <= 23; t ++){
+                        
+                        var timeSlot = document.createElement("div");
+                        timeSlot.innerHTML = "<h5 style='margin:5px'>"+t+":00</h5><hr style='margin-top:5px'>";
+                        
+                        var eventSpace = document.createElement("div");
+                        eventSpace.style.minHeight = "5px";
+//                        eventSpace.innerHTML = "<br />";
+                        
+                        
+                        body.appendChild(timeSlot);
+                        timeSlot.appendChild(eventSpace);
+                        
+                        dragulaSpaces.push(eventSpace);
+                    }
+                    
+                }
+                
+                dragulaSpaces.push(document.getElementById('createdEvents'));
+                
+                dragula(dragulaSpaces);
+            }
+            
+//            dragula([document.getElementById('Sunday'), 
+//                document.getElementById('Monday'), 
+//                document.getElementById('Tuesday'), 
+//                document.getElementById('Wednesday'), 
+//                document.getElementById('Thursday'), 
+//                document.getElementById('Friday'), 
+//                document.getElementById('Saturday'),
+//                document.getElementById('createdEvents')
+//            ]);
+            
+            function createOlympEvent(){
+                
+                
+                var ele = document.createElement("div");
+                ele.setAttribute("class", "well well-sm");
+                ele.innerHTML = "<b>"+document.getElementById("sportCreation").value+"</b><br\>"+document.getElementById("locationCreation").value;
+                document.getElementById("createdEvents").appendChild(ele);
+                document.getElementById("eventName").value = "";
+            }
+            
+        </script>
+
+        
     </body>
+    
+    
+    
 </html>
+
