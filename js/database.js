@@ -25,6 +25,13 @@ function getDatabase() {
     return databaseInstance;
 }
 
+/*
+ * Database object that keeps up with all information needed to run the 
+ * application.  Acts as Util with methods such as finding users by username
+ * and other nifty functions
+ * 
+ * @returns {Database}
+ */
 function Database() {
 
     var self = this;
@@ -83,6 +90,86 @@ function Database() {
 
     };
 
+    /**
+     * Searches through the database and finds a user with a matching username
+     * and password.
+     * 
+     * @param {string} username
+     * @param {string} password
+     * @returns {Window.AbstractUser}
+     */
+    self.getUserWithNameAndPassword = function (username, password) {
+
+        var user = self.getUserByUsername(username);
+
+        //We couldn't find a user with a matching username
+        if(user === null){
+            return null;
+        }
+
+        //Return user if password matches
+        if(user.password === password){
+            return user;
+        }
+
+        //We couldn't find ourselves a user
+        return null;
+
+    };
+
+    /**
+     * Adds a generic user to the database.
+     * Returns user if succesful.
+     * Returns null if an error
+     * 
+     * @param {string} username
+     * @param {string} password
+     * @returns {GenericUser}
+     */
+    self.addNewUserToDataBase = function(username, password){
+        
+        //If we found a user already with the same user name return error
+        if(self.getUserByUsername(username) !== null){
+            return null;
+        }
+        
+        var user = new GenericUser();
+        
+        user.userName = username;
+        
+        user.password = password;
+        
+        self.users.push(user);
+        
+        return user;
+        
+    };
+    
+    
+    /*
+     * Finds a user by it's username, returns null if it can't find a user
+     * with the matching username
+     * 
+     * @param {string} username
+     * @returns {AbstractUser}
+     */
+    self.getUserByUsername = function(username){
+        
+        //Iterate through all users
+        for(var i = 0; i < self.getUsers().length; i ++){
+            
+            //if we found the user that matches username and password
+            if(self.getUsers()[i].userName === username ){
+                
+                return self.getUsers()[i];
+                
+            }
+            
+        }
+        
+        return null;
+    };
+
 }
 
 function EventDay() {
@@ -107,9 +194,9 @@ function Event() {
 
 }
 
-/**
+/*
  * 
- * @returns {undefined}
+ * @returns {Notification}
  */
 function Notification() {
 
@@ -138,6 +225,15 @@ function Notification() {
      */
     self.read = false;
 
+    /**
+     * Marks the notification as read.
+     * 
+     * @returns {undefined}
+     */
+    self.markAsRead = function(){
+        self.read = true;
+    };
+
 }
 
 
@@ -148,6 +244,18 @@ function Notification() {
 function AbstractUser() {
 
     var self = this;
+
+    /**
+     * Username the user uses to log into our system
+     */
+    self.userName = "";
+    
+    
+    /**
+     * Password to the user account
+     */
+    self.password = "";
+
 
     /**
      * Name of the user
