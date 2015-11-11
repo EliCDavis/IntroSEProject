@@ -19,6 +19,16 @@ function getDatabase() {
             databaseInstance.addEventDay(eventDay);
 
         }
+        
+        var gu = new GenericUser();
+        gu.userName = "user";
+        gu.password = "pw";
+        
+        var mu = new Manager();
+        mu.userName = "admin";
+        mu.password = "pw";
+        
+        databaseInstance.users = [gu, mu];
 
     }
 
@@ -267,7 +277,6 @@ function AbstractUser() {
      */
     self.id = generateUUID();
 
-
 }
 
 
@@ -277,6 +286,8 @@ function AbstractUser() {
  * @returns {undefined}
  */
 function GenericUser() {
+
+    AbstractUser.apply(this, arguments);
 
     var self = this;
 
@@ -289,6 +300,7 @@ function GenericUser() {
 
 //Applys inheritance
 GenericUser.prototype = Object.create(AbstractUser.prototype);
+GenericUser.prototype.constructor = GenericUser;
 
 
 /**
@@ -297,9 +309,10 @@ GenericUser.prototype = Object.create(AbstractUser.prototype);
  * @returns {undefined}
  */
 function Athlete() {
+    
+    AbstractUser.apply(this, arguments);
 
     var self = this;
-
 
     /**
      * Array of uuid's that corresponds to an event's uuid
@@ -349,6 +362,7 @@ function Athlete() {
 
 //Applys inheritance
 Athlete.prototype = Object.create(AbstractUser.prototype);
+Athlete.prototype.constructor = Athlete;
 
 
 /**
@@ -357,6 +371,8 @@ Athlete.prototype = Object.create(AbstractUser.prototype);
  * @returns {undefined}
  */
 function Guard() {
+
+    AbstractUser.apply(this, arguments);
 
     var self = this;
 
@@ -395,6 +411,7 @@ function Guard() {
 
 //Applys inheritance
 Guard.prototype = Object.create(AbstractUser.prototype);
+Guard.prototype.constructor = Guard;
 
 
 /**
@@ -403,6 +420,8 @@ Guard.prototype = Object.create(AbstractUser.prototype);
  * @returns {undefined}
  */
 function SecurityManager() {
+    
+    AbstractUser.apply(this, arguments);
 
     var self = this;
 
@@ -410,6 +429,7 @@ function SecurityManager() {
 
 //Applys inheritance
 SecurityManager.prototype = Object.create(AbstractUser.prototype);
+SecurityManager.prototype.constructor = SecurityManager;
 
 
 /**
@@ -418,10 +438,16 @@ SecurityManager.prototype = Object.create(AbstractUser.prototype);
  * @returns {undefined}
  */
 function Manager() {
+    
+    AbstractUser.apply(this, arguments);
 
     var self = this;
 
 }
+
+//Applys inheritance
+Manager.prototype = Object.create(AbstractUser.prototype);
+Manager.prototype.constructor = Manager;
 
 
 /**
@@ -437,7 +463,6 @@ function generateUUID() {
     });
     return uuid;
 }
-;
 
 ////////////// Tests from here under (Idk exactly what's going on) ///////////
 var gUser = new GenericUser();
@@ -445,5 +470,7 @@ var gUser = new GenericUser();
 gUser.name = "Jim";
 gUser.ticketsBought = ["Hell", "On", "Earth"];
 
-console.log(gUser.name);
+console.log(gUser.constructor.name);
+
 console.log(gUser.ticketsBought);
+console.log(gUser.id);
