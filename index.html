@@ -58,27 +58,13 @@ and open the template in the editor.
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
+                        
                         <li><a href="#">Home <span class="sr-only">(current)</span></a></li>
                         <li><a href="#">Schedule</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">One more separated link</a></li>
-                            </ul>
-                        </li>
+                        
                     </ul>
-                    <form class="navbar-form navbar-left" role="search">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search">
-                        </div>
-                        <button type="submit" class="btn btn-default">Submit</button>
-                    </form>
+                    
+                    
                     <ul class="nav navbar-nav navbar-right">
                         
                         <li data-bind="if: userSignedIn"><a> Welcome <b data-bind="text: userSignedIn().name"></b>!</a></li>
@@ -91,11 +77,15 @@ and open the template in the editor.
                            
                             <ul class="dropdown-menu">
                             
-                                <li><a href="#">Action</a></li>
+                                <li data-bind="if: isAthlete, click: displayOwnAthleteBio"><a href="#">View Bio</a></li>
+
+                                <li data-bind="if: isAthlete, click: displayAthleteBioEdit"><a href="#">Edit Bio</a></li>
                                 
-                                <li><a href="#">Another action</a></li>
+                                <li data-bind="if: isAthlete, click: displayAthleteBioEdit"><a href="#">Request Autograph Session</a></li>
                                 
-                                <li data-bind="if: isAthlete, click: displayEventCreationScreen"><a href="#">Edit Bio</a></li>
+                                <li data-bind="if: isAthlete, click: displayAthleteBioEdit"><a href="#">Request Security</a></li>
+                                
+                                <li data-bind="if: isAthlete, click: displayAthleteBioEdit"><a href="#">Request Free Tickets</a></li>
                                 
                                 <li data-bind="if: isManager, click: displayEventCreationScreen"><a href="#">Create Event</a></li>
                                 
@@ -164,7 +154,7 @@ and open the template in the editor.
                         
                         <input type="text" class="form-control" id="inputACUsername" placeholder="Username">
                         <br>
-
+                        
                         <input type="password" class="form-control" id="inputACPassword" placeholder="Password">
                         <br>
 
@@ -173,12 +163,56 @@ and open the template in the editor.
                     </div>
                     
                 </div>
+
+                <!--Info about a single Athlete-->
+                <div data-bind="if: sideViewType() === 'AthleteBio'">
+                    
+                    <h1 ><span id="athleteBioName"></span> <small >Age: <span id='athleteBioAge'></span></small></h1>
+                
+                    <img class="img-rounded" id ='athleteBioPic' align="left" style='margin:5px;width:100%' src="..." alt="Picture of Athlete">
+                     
+                    <h4 class="media-heading"><span>Country</span> - <span>Sport</span></h4>
+                            
+                    <p id='athleteBioBio'>Bio</p>
+                    
+                </div>
+                
                 
                 <div data-bind="visible: userSignedIn() !== null">
                 
                     <div data-bind="if: sideViewType() === 'Notifications'">
                         <h1>Notifications</h1>
                     </div>
+                    
+                    <div data-bind="if: sideViewType() === 'AthleteBioEdit'">
+                        <h1>Edit Bio</h1>
+                        
+                        <b>Name: </b>
+                        <input type="text" class="form-control" id="athleteNameEdit" placeholder="Name"><br>
+                        
+                        <b>Profile Picture Url:</b>
+                        <input type="text" class="form-control" id="athletePicEdit" placeholder="url"><br>
+                       
+                        <b>Birthday: </b>
+                        <input type="date" class="form-control" id="athleteBdayEdit">
+                        <br>
+                        
+                        <b>Sport: </b>
+                        <br>[Insert Sport Dropdown Here]<br><br>
+                        
+                        <b>Country: </b>
+                        <br>[Insert Country Dropdown Here]<br><br>
+                        
+                        <b>Bio:</b>
+                        <textarea class="form-control" rows="3" style="resize:vertical;" id="athleteBiotEdit"></textarea>
+                        
+                        <br>
+                        <button type="submit" class="btn btn-default" data-bind="click: saveAthleteBioInfo">Save Changes</button>
+                        
+                    </div>
+                    
+                    
+                    
                     
                     <div data-bind="if: sideViewType() === 'EventCreation'">
                         

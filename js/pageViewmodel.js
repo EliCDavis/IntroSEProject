@@ -24,7 +24,7 @@ function PageViewmodel(){
      * The type of view that is being displayed in the side bar currentely
      * 
      * Can be type:
-     * Login, Notifications, EventCreation
+     * Login, Notifications, EventCreation, AthleteBioEdit, AthleteBio
      */
     self.sideViewType = ko.observable("Login");
     
@@ -155,6 +155,36 @@ function PageViewmodel(){
         self.sideViewType("EventCreation");
     };
     
+    self.displayAthleteBioEdit = function(){
+        
+        self.sideViewType("AthleteBioEdit");
+        
+        // Loads all athlete data on the page.
+        document.getElementById("athleteBiotEdit").value = self.userSignedIn().bio;
+        document.getElementById("athleteNameEdit").value = self.userSignedIn().name;
+        document.getElementById("athletePicEdit").value = self.userSignedIn().profilePicUrl;
+        document.getElementById("athleteBdayEdit").value = self.userSignedIn().dateOfBirth;
+         //self.userSignedIn().dateOfBirth = document.getElementById("athleteBdayEdit").value;
+        
+        
+    };
+    
+    /*
+     * 
+     * @returns {undefined}
+     */
+    self.displayOwnAthleteBio = function(){
+        
+        self.sideViewType("AthleteBio");
+        
+        document.getElementById("athleteBioBio").innerHTML = self.userSignedIn().bio;
+        document.getElementById("athleteBioName").innerHTML = self.userSignedIn().name;
+        document.getElementById("athleteBioAge").innerHTML = _calculateAge( new Date(self.userSignedIn().dateOfBirth) );
+        document.getElementById("athleteBioPic").src = self.userSignedIn().profilePicUrl;
+        //_calculateAge
+        
+    };
+    
     /**
      * Ko computed function that returns true if the user currentely signed in
      * is a manager
@@ -170,6 +200,7 @@ function PageViewmodel(){
         
     });
     
+    
     /**
      * Ko computed function that returns true if the user currentely signed in
      * is a Athlete
@@ -177,13 +208,34 @@ function PageViewmodel(){
      */
     self.isAthlete = ko.computed(function(){
         
-        if(self.userSignedIn() !== null && self.userSignedIn().constructor.name === "Athlete"){
+        if(self.userSignedIn() !== null && 
+                self.userSignedIn().constructor.name === "Athlete"){
+            
             return true;
+        
         }
         
         return false;
         
     });
+    
+    
+    self.saveAthleteBioInfo = function(){
+        
+        if(self.userSignedIn() !== null){
+            
+            alert("This needs to be finnished!");
+            
+            self.userSignedIn().bio = document.getElementById("athleteBiotEdit").value;
+            self.userSignedIn().name = document.getElementById("athleteNameEdit").value;
+            self.userSignedIn().profilePicUrl = document.getElementById("athletePicEdit").value;
+            self.userSignedIn().dateOfBirth = document.getElementById("athleteBdayEdit").value;
+            console.log(document.getElementById("athleteBdayEdit").value);
+            
+//            self.userSignedIn().country = document.getElementById("athletePicEdit").value;
+        }
+        
+    };
     
 }
 
