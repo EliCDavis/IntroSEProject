@@ -98,8 +98,8 @@ function Database() {
 
         for (var i = 0; i < self.notifications.length; i++) {
 
-            if (self.notifications[i].to === user.id) {
-                foundNotifications.push(self.notifications[i].to);
+            if (self.notifications[i].toID === user.id) {
+                foundNotifications.push(self.notifications[i]);
             }
 
         }
@@ -154,9 +154,7 @@ function Database() {
         var user = new GenericUser();
         
         user.userName = username;
-        
         user.password = password;
-        
         self.users.push(user);
         
         return user;
@@ -186,6 +184,35 @@ function Database() {
         }
         
         return null;
+    };
+    
+    /*
+     * Sends a request to a manager in the database.
+     * 
+     * @param {AbstractUser} sender
+     * @param {String} requestMessage
+     * @returns {undefined}
+     */
+    self.requestToManager = function(sender, requestMessage){
+        
+        var notification = new Notification();
+        
+        notification.fromID = sender.id;
+        notification.message(requestMessage);
+        
+        for(var i = 0; i < self.getUsers().length; i ++){
+            
+            if(self.getUsers()[i].constructor.name === "Manager"){
+                
+                notification.toID = self.getUsers()[i].id;
+                break;
+                
+            }
+            
+        }
+        
+        self.notifications.push(notification);
+        
     };
 
 }
@@ -226,17 +253,17 @@ function Notification() {
      * The person who created the notification. 
      * If an athlete requested autographing, then the notification is from them
      */
-    self.from;
+    self.fromID;
 
     /*
      * The person who actually receives the notifcation and is able to read it
      */
-    self.to;
+    self.toID;
 
     /**
      * Text of the notification
      */
-    self.message;
+    self.message = ko.observable("Balls");
 
     /**
      * Whether or not the user has read the notification

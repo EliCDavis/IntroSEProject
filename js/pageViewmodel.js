@@ -24,9 +24,13 @@ function PageViewmodel(){
      * The type of view that is being displayed in the side bar currentely
      * 
      * Can be type:
-     * Login, Notifications, EventCreation, AthleteBioEdit, AthleteBio
+     * Login, Notifications, EventCreation, AthleteBioEdit, AthleteBio, 
+     * RequestAutoSession
      */
     self.sideViewType = ko.observable("Login");
+    
+    
+    self.notifications = ko.observableArray();
     
     
     /**
@@ -68,6 +72,9 @@ function PageViewmodel(){
         if(user.constructor.name === "Manager"){
             self.displayEventCreationScreen();
         }
+        
+        self.notifications(getDatabase().getNotificationsForUser(user));
+        console.log(self.notifications());
         
     };
     
@@ -164,8 +171,6 @@ function PageViewmodel(){
         document.getElementById("athleteNameEdit").value = self.userSignedIn().name;
         document.getElementById("athletePicEdit").value = self.userSignedIn().profilePicUrl;
         document.getElementById("athleteBdayEdit").value = self.userSignedIn().dateOfBirth;
-         //self.userSignedIn().dateOfBirth = document.getElementById("athleteBdayEdit").value;
-        
         
     };
     
@@ -181,8 +186,13 @@ function PageViewmodel(){
         document.getElementById("athleteBioName").innerHTML = self.userSignedIn().name;
         document.getElementById("athleteBioAge").innerHTML = _calculateAge( new Date(self.userSignedIn().dateOfBirth) );
         document.getElementById("athleteBioPic").src = self.userSignedIn().profilePicUrl;
-        //_calculateAge
         
+    };
+    
+    self.displayRequestAutoSession = function(){
+        
+        self.sideViewType("RequestAutoSession");
+    
     };
     
     /**
@@ -232,8 +242,33 @@ function PageViewmodel(){
             self.userSignedIn().dateOfBirth = document.getElementById("athleteBdayEdit").value;
             console.log(document.getElementById("athleteBdayEdit").value);
             
-//            self.userSignedIn().country = document.getElementById("athletePicEdit").value;
         }
+        
+    };
+    
+    
+    /**
+     * Requests the athlete makes when they've filled out a autograph session
+     * request
+     * 
+     * @returns {undefined}
+     */
+    self.requestAutoSession = function(){
+        
+        var loc = document.getElementById("requestAutoSessionLoc").value;
+        var date = document.getElementById("reqAutoSessionDate").value;
+        var time = document.getElementById("reqAutoSessionTime").value;
+        
+        // If any of these variables where not filled in then we can't create
+        // a request
+        if(loc === null || date === null || time === null){
+            alert("Fill out the form before clicking request!");
+            return;
+        }
+        
+        var requestMessage = (self.userSignedIn().name+" has requested an autographing session at "+time+" on "+date+" in the "+loc+"!");
+        
+        getDatabase().requestToManager(self.userSignedIn(), requestMessage);
         
     };
     

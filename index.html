@@ -81,7 +81,7 @@ and open the template in the editor.
 
                                 <li data-bind="if: isAthlete, click: displayAthleteBioEdit"><a href="#">Edit Bio</a></li>
                                 
-                                <li data-bind="if: isAthlete, click: displayAthleteBioEdit"><a href="#">Request Autograph Session</a></li>
+                                <li data-bind="if: isAthlete, click: displayRequestAutoSession"><a href="#">Request Autograph Session</a></li>
                                 
                                 <li data-bind="if: isAthlete, click: displayAthleteBioEdit"><a href="#">Request Security</a></li>
                                 
@@ -182,6 +182,15 @@ and open the template in the editor.
                 
                     <div data-bind="if: sideViewType() === 'Notifications'">
                         <h1>Notifications</h1>
+                        <div data-bind="foreach: notifications">
+                            
+                            <div class="alert alert-warning alert-dismissible" role="alert" >
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <span data-bind='text: message '></span>
+                            </div>
+                            
+                        </div>
+                        
                     </div>
                     
                     <div data-bind="if: sideViewType() === 'AthleteBioEdit'">
@@ -212,6 +221,23 @@ and open the template in the editor.
                     </div>
                     
                     
+                    <div data-bind="if: sideViewType() === 'RequestAutoSession'">
+                        <h1>Request Autographing Session</h1>
+                        <b>Location:</b>
+                        <select id='requestAutoSessionLoc' class='form-control'>
+                            <option>Olympic Stadium</option>
+                        </select>
+
+                        <br />
+                        <b>Date and Time:</b>
+                        <input type="date" id='reqAutoSessionDate'>
+                        <input type="time" id='reqAutoSessionTime'>
+                        <br/>
+                        <br/>
+                        <button class="btn btn-primary btn-lg" data-bind='click: requestAutoSession'>Request</button>
+                        <br />
+                        <br />
+                    </div>
                     
                     
                     <div data-bind="if: sideViewType() === 'EventCreation'">
