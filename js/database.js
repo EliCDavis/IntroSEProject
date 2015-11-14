@@ -11,32 +11,10 @@ function getDatabase() {
     if (databaseInstance === null) {
 
         databaseInstance = new Database();
-
-        for (var i = 5; i <= 21; i++) {
-
-            var eventDay = new EventDay();
-            eventDay.name = "August " + i;
-            databaseInstance.addEventDay(eventDay);
-
-        }
         
-        var gu = new GenericUser();
-        gu.userName = "user";
-        gu.password = "pw";
+        databaseInstance.eventDays = loadAllEventDays();
         
-        var mu = new Manager();
-        mu.userName = "admin";
-        mu.password = "pw";
-        
-        var au = new Athlete();
-        au.userName = "athlete";
-        au.password = "pw";
-        au.name = "Michael Phelps";
-        au.profilePicUrl = "https://lgoogoogaga.files.wordpress.com/2012/07/michael-phelps2.jpg";
-        au.bio = "Michael Fred Phelps II (born June 30, 1985) is an American competition swimmer and the most decorated Olympian of all time, with a total of 22 medals. Phelps also holds the all-time records for Olympic gold medals (18, double the second highest record holders), Olympic gold medals in individual events (11), and Olympic medals in individual events for a male (13). In winning eight gold medals at the 2008 Beijing Games, Phelps took the record for the most first-place finishes at any single Olympic Games. Five of those victories were in individual events, tying the single Games record. In the 2012 Summer Olympics in London, Phelps won four golds and two silver medals, making him the most successful athlete of the Games for the third Olympics in a row.";
-        au.dateOfBirth = "1985-06-30";
-        
-        databaseInstance.users = [gu, mu, au];
+        databaseInstance.users = loadAllUsers();
 
     }
 
@@ -64,6 +42,7 @@ function Database() {
         self.eventDays.push(eventDay);
     };
 
+    self.events = [];
 
     /**
      * Array of all users
@@ -220,6 +199,8 @@ function Database() {
 function EventDay() {
 
     var self = this;
+    
+    self.id = generateUUID();
 
     self.name = "";
 
@@ -233,9 +214,21 @@ function Event() {
 
     self.id = generateUUID();
 
-    self.startTime = "";
+    self.startTime = ko.observable("");
 
-    self.sport = "";
+    self.sport = ko.observable("");
+    
+    self.location = ko.observable("");
+    
+    /*
+     * ID of 
+     */
+    self.eventDay = "";
+    
+    /*
+     * array of athlete IDs that define who are going to the event
+     */
+    self.athletes = [];
 
 }
 
@@ -268,7 +261,7 @@ function Notification() {
     /**
      * Whether or not the user has read the notification
      */
-    self.read = false;
+    self.read = ko.observable(false);
 
     /**
      * Marks the notification as read.
@@ -276,7 +269,11 @@ function Notification() {
      * @returns {undefined}
      */
     self.markAsRead = function(){
-        self.read = true;
+        self.read(true);
+    };
+    
+    self.markAsUnread = function(){
+        self.read(false);
     };
 
 }
@@ -290,7 +287,7 @@ function AbstractUser() {
 
     var self = this;
 
-    /**
+    /*
      * Username the user uses to log into our system
      */
     self.userName = "";
@@ -392,6 +389,11 @@ function Athlete() {
      * Country the Athlete is competing for.
      */
     self.country = "";
+    
+    /*
+     * Sport the athlete competes in
+     */
+    self.sport = "";
 
 }
 
@@ -511,7 +513,6 @@ var gUser = new GenericUser();
 gUser.name = "Jim";
 gUser.ticketsBought = ["Hell", "On", "Earth"];
 
-console.log(gUser.constructor.name);
-
-console.log(gUser.ticketsBought);
-console.log(gUser.id);
+//console.log(gUser.constructor.name);
+//console.log(gUser.ticketsBought);
+//console.log(gUser.id);

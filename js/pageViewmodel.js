@@ -25,11 +25,14 @@ function PageViewmodel(){
      * 
      * Can be type:
      * Login, Notifications, EventCreation, AthleteBioEdit, AthleteBio, 
-     * RequestAutoSession
+     * RequestAutoSession, ViewEvent
      */
     self.sideViewType = ko.observable("Login");
     
     
+    /*
+     * Notifications the user has received
+     */
     self.notifications = ko.observableArray();
     
     
@@ -74,7 +77,6 @@ function PageViewmodel(){
         }
         
         self.notifications(getDatabase().getNotificationsForUser(user));
-        console.log(self.notifications());
         
     };
     
@@ -153,13 +155,18 @@ function PageViewmodel(){
         self.sideViewType("Notifications");
     };
     
+    
     /**
      * Displays the Event Creation Screen
      * 
      * @returns {undefined}
      */
     self.displayEventCreationScreen = function(){
+        
         self.sideViewType("EventCreation");
+        //Add container to dragula for dragging.
+        drake.containers.push(document.getElementById('createdEvents'));
+        
     };
     
     self.displayAthleteBioEdit = function(){
@@ -272,7 +279,36 @@ function PageViewmodel(){
         
     };
     
+    
+    self.eventBeingDisplayed = ko.observable(null);
+    
+    self.displayEvent = function(eventID){
+        
+        var sport = "";
+        
+        for(var i = 0; i < getDatabase().events.length; i ++){
+            if(getDatabase().events[i].id === eventID){
+                
+                sport = getDatabase().events[i].sport();
+                self.eventBeingDisplayed(getDatabase().events[i]);
+
+            }
+        }
+        
+        //alert("This worked: "+eventID+", sport: "+sport);
+        
+        self.sideViewType("ViewEvent");
+    };
+    
+    
+    self.purchaseEventTicket = function(){
+        
+        alert("Your account has been billed: 80$");
+        
+    };
+    
 }
 
+var pageView = new PageViewmodel();
 
-ko.applyBindings(new PageViewmodel());
+ko.applyBindings(pageView);

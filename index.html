@@ -24,6 +24,7 @@ and open the template in the editor.
         <link href ="js/libs/dragula/dragula.min.css" rel="stylesheet">
         
         <script src ="js/database.js"></script>
+        <script src="js/databaseStore.js"></script>
         
         <style>
             .horizMod{
@@ -33,8 +34,9 @@ and open the template in the editor.
                 padding-right: 0px;
                 padding-left: 0px;
             }
-             th, td { min-width: 200px; 
-    vertical-align: top;
+             th, td { 
+                min-width: 200px; 
+                vertical-align: top;
              }
              /*tr {position: fixed;}*/
         </style>
@@ -177,18 +179,74 @@ and open the template in the editor.
                     
                 </div>
                 
+                <div data-bind="if: sideViewType() === 'ViewEvent'">
+                        
+                    <h1>Event</h1>
+                    
+                    <div data-bind = "if: eventBeingDisplayed() !== null">
+                        
+                        <b>Sport: </b>
+                            <span data-bind="text: eventBeingDisplayed().sport()"></span><br />
+                        
+                        <b>Location: </b><span data-bind="text: eventBeingDisplayed().location()"></span><br />
+
+                        <b>Time: </b><span data-bind="text: eventBeingDisplayed().startTime()"></span><br />
+                        <b>Price: </b> 80$<br />
+
+                        <br />
+
+                        <b>Athletes: </b><br />
+
+                        <div data-bind="foreach: eventBeingDisplayed().athletes">
+                            
+                        </div>
+                        
+                        <br />
+                        
+                        <button class="btn btn-primary" onclick="pageView.purchaseEventTicket()">Purchase Ticket</button>
+                        
+                    </div>
+                    
+                </div>
+                
                 
                 <div data-bind="visible: userSignedIn() !== null">
                 
                     <div data-bind="if: sideViewType() === 'Notifications'">
+                        
                         <h1>Notifications</h1>
+                        
+                        <h3>Unread</h3>
                         <div data-bind="foreach: notifications">
+                        
                             
-                            <div class="alert alert-warning alert-dismissible" role="alert" >
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <span data-bind='text: message '></span>
+                            <div data-bind="if: read() === false">
+
+                                <div  class="alert alert-warning alert-dismissible" role="alert" >
+
+                                    <span data-bind='text: message'></span><br><br>
+                                    <button class="btn btn-block" data-bind="click: markAsRead">Mark As Read</button>
+
+                                </div>
+
                             </div>
                             
+                            
+                            
+                        </div>
+                        
+                        <h4>Read</h4>
+                        <div data-bind="foreach: notifications">  
+                            <div data-bind="if: read">
+
+                                <div  class="alert alert-warning alert-dismissible" role="alert" >
+
+                                    <span data-bind='text: message'></span><br><br>
+                                    <button class="btn btn-block" data-bind="click: markAsUnread">Mark As Unread</button>
+
+                                </div>
+
+                            </div>
                         </div>
                         
                     </div>
@@ -238,6 +296,9 @@ and open the template in the editor.
                         <br />
                         <br />
                     </div>
+                    
+                    
+                    
                     
                     
                     <div data-bind="if: sideViewType() === 'EventCreation'">
@@ -444,7 +505,11 @@ and open the template in the editor.
             
         </div>
         
+        <script src="js/pageViewmodel.js"></script>
+        
         <script>
+            
+            var drake;
             
             initialize();
             
@@ -493,23 +558,30 @@ and open the template in the editor.
                 
                 dragulaSpaces.push(document.getElementById('createdEvents'));
                 
-                dragula(dragulaSpaces);
+                drake = dragula(dragulaSpaces);
             }
 
             
             function createOlympEvent(){
                 
+                var event = new Event();
+                event.sport(document.getElementById("sportCreation").value);
+                event.location(document.getElementById("locationCreation").value);
+                
+                var database = getDatabase();
+                database.events.push(event);
+                
                 var ele = document.createElement("div");
                 ele.setAttribute("class", "well well-sm");
-                ele.innerHTML = "<b>"+document.getElementById("sportCreation").value+"</b><br\>"+document.getElementById("locationCreation").value;
+                ele.innerHTML += '<button type="button" onclick="pageView.displayEvent(\''+event.id+'\')" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></button>   ';
+                ele.innerHTML += "<b>"+document.getElementById("sportCreation").value+"</b><br\>"+document.getElementById("locationCreation").value+"<br />";
                 document.getElementById("createdEvents").appendChild(ele);
-                document.getElementById("eventName").value = "";
                 
             }
             
         </script>
 
-        <script src="js/pageViewmodel.js"></script>
+        
         
     </body>
     
