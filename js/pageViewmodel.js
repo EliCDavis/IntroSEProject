@@ -483,16 +483,14 @@ function PageViewmodel(){
 
         console.log(event);
         
-        if(self.isGeneric()){
-            self.userSignedIn().ticketsBought.push(event.id);
-            
-            
-            self.displayEvent(event.id);
-            
-            //refresh the view, quick and easy way :3
-            self.displayHomeView();
-            self.displayCallenderView();
-        }
+        self.userSignedIn().ticketsBought.push(event.id);
+
+
+        self.displayEvent(event.id);
+
+        //refresh the view, quick and easy way :3
+        self.displayHomeView();
+        self.displayCallenderView();
         
     };
     

@@ -596,10 +596,8 @@ and open the template in the editor.
                 
                 var classNode = "alert alert-warning";
                 
-                if(pageView.isGeneric()){
-                    if(pageView.userSignedIn().hasTicketToEvent(eventId)){
-                        classNode = "alert alert-success";
-                    }
+                if(pageView.userSignedIn().hasTicketToEvent(eventId)){
+                    classNode = "alert alert-success";
                 }
                 
                 var event = getDatabase().grabEventByID(eventId);
@@ -648,11 +646,7 @@ and open the template in the editor.
             
         </script>
 
-        
-        
     </body>
-    
-    
     
 </html>
 
