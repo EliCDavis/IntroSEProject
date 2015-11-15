@@ -9,6 +9,12 @@ function PageViewmodel(){
 
     var self = this;
     
+    self.eventTypes = ko.observableArray(getDatabase().eventTypes);
+    
+    self.eventLocations = ko.observableArray(databaseStore.locations);
+    
+    self.allAthletes = ko.observableArray(getDatabase().getAllAvailableAthlete());
+    
     self.userSignedIn = ko.observable(null);
     
     /**
@@ -156,6 +162,18 @@ function PageViewmodel(){
     };
     
     
+    self.athletesAddedToEventCreation = ko.observableArray();
+    
+    self.addAthleteToEventCreation = function(athlete){
+        self.athletesAddedToEventCreation.push(athlete);
+        self.allAthletes.remove(athlete);
+    };
+    
+    self.removeAthleteFromEventCreation = function(athlete){
+        self.athletesAddedToEventCreation.remove(athlete);
+        self.allAthletes.push(athlete);
+    };
+    
     /**
      * Displays the Event Creation Screen
      * 
@@ -163,9 +181,52 @@ function PageViewmodel(){
      */
     self.displayEventCreationScreen = function(){
         
+        //reset this.
+        self.allAthletes(getDatabase().getAllAvailableAthlete());
+        self.athletesAddedToEventCreation([]);
+        
+        //display it
         self.sideViewType("EventCreation");
+        
         //Add container to dragula for dragging.
         drake.containers.push(document.getElementById('createdEvents'));
+
+        
+//        $("#athleteDirectorSearchEventCreation").keyup(function () {
+//            //split the current value of searchInput
+//            var data = this.value.split(" ");
+//            //create a jquery object of the rows
+//            var jo = $("#athleteDirectoryEventCreation").find("tr");
+//            if (this.value == "") {
+//                jo.show();
+//                return;
+//            }
+//            //hide all the rows
+//            jo.hide();
+//
+//            //Recusively filter the jquery object to get results.
+//            jo.filter(function (i, v) {
+//                var $t = $(this);
+//                console.log($t);
+//                for (var d = 0; d < data.length; ++d) {
+//                    
+//                    if ($t.is(":contains('" + data[d] + "')")) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            })
+//                    //show the rows that match.
+//                    .show();
+//        }).focus(function () {
+//            this.value = "";
+//            $(this).css({
+//                "color": "black"
+//            });
+//            $(this).unbind('focus');
+//        }).css({
+//            "color": "#C0C0C0"
+//        });
         
     };
     
@@ -193,6 +254,17 @@ function PageViewmodel(){
         document.getElementById("athleteBioName").innerHTML = self.userSignedIn().name;
         document.getElementById("athleteBioAge").innerHTML = _calculateAge( new Date(self.userSignedIn().dateOfBirth) );
         document.getElementById("athleteBioPic").src = self.userSignedIn().profilePicUrl;
+        
+    };
+    
+    self.displayAthleteBio = function(athlete){
+        
+        self.sideViewType("AthleteBio");
+        
+        document.getElementById("athleteBioBio").innerHTML = athlete.bio;
+        document.getElementById("athleteBioName").innerHTML = athlete.name;
+        document.getElementById("athleteBioAge").innerHTML = _calculateAge( new Date(athlete.dateOfBirth) );
+        document.getElementById("athleteBioPic").src = athlete.profilePicUrl;
         
     };
     
@@ -282,20 +354,22 @@ function PageViewmodel(){
     
     self.eventBeingDisplayed = ko.observable(null);
     
+    self.athletesInEventView = ko.observableArray();
+    
     self.displayEvent = function(eventID){
         
-        var sport = "";
+        self.athletesInEventView([]);
         
         for(var i = 0; i < getDatabase().events.length; i ++){
             if(getDatabase().events[i].id === eventID){
-                
-                sport = getDatabase().events[i].sport();
                 self.eventBeingDisplayed(getDatabase().events[i]);
-
             }
         }
         
-        //alert("This worked: "+eventID+", sport: "+sport);
+        for(var i = 0; i < self.eventBeingDisplayed().athletes.length; i ++){
+            self.athletesInEventView.push(getDatabase().getUserByID(self.eventBeingDisplayed().athletes[i]));
+        }
+        
         
         self.sideViewType("ViewEvent");
     };
@@ -303,7 +377,7 @@ function PageViewmodel(){
     
     self.purchaseEventTicket = function(){
         
-        alert("Your account has been billed: 80$");
+        alert("ELI COMPLETE THIS");
         
     };
     

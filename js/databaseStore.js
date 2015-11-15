@@ -4,7 +4,10 @@
  * and open the template in the editor.
  */
 
-/* Everything stored in our database in Json format, to be loaded into databse 
+/* 
+ * http://www.rio2016.com/sites/default/files/users/rio2016_files/guia_ingressoing_2015_daily_0.pdf
+ * 
+ * Everything stored in our database in Json format, to be loaded into databse 
  * object upon start
  */
 var databaseStore = {
@@ -29,29 +32,43 @@ var databaseStore = {
             picUrl: "https://lgoogoogaga.files.wordpress.com/2012/07/michael-phelps2.jpg",
             dateOfBirth: "1985-06-30",
             gender: "Male",
-            country: "America",
+            country: "USA",
             sport: "Swimming"
+        },
+        {
+            id: "d560edaf-8b7b-4413-a332-d951fccd9f56",
+            type: "Athlete",
+            userName: "athlete",
+            password: "pw",
+            name: "Anti Phelps",
+            ticketsOwned : [],
+            bio: "Not Not Micheal Phelps",
+            picUrl: "https://lgoogoogaga.files.wordpress.com/2012/07/michael-phelps2.jpg",
+            dateOfBirth: "1985-06-30",
+            gender: "Male",
+            country: "Anti-USA",
+            sport: "Weightlifting"
         },
         {
             id: "4e0c71a0-9fc1-4e29-8306-444faf3407f8",
             type: "Manager",
             userName: "admin",
             password: "pw",
-            name: ""
+            name: "Manager Dude"
         },
         {
             id: "31ee35d3-e1e2-4083-922a-7d005d82f210",
             type: "Security",
             userName: "sec",
             password: "pw",
-            name: ""
+            name: "Security Dude"
         },
         {
             id: "9eb71fa3-d7f3-446b-96e7-0f445b995032",
             type: "SecurityManager",
             userName: "secadmin",
             password: "pw",
-            name: ""
+            name: "Security Manager Dude"
         }
     ],
     eventDays: [
@@ -124,7 +141,9 @@ var databaseStore = {
             name: "Final Day"  
         }
     ],
-    sports: [
+    eventTypes: [
+        "Awards",
+        "Autographing",
         "Archery",
         "Basketball",
         "Beach Volleyball",
@@ -141,7 +160,17 @@ var databaseStore = {
         "Weightlifting"
     ],
     locations: [
-        "Olympic Stadium"
+        "Olympic Stadium",
+        "Sambódromo",
+        "Pontal",
+        "Beach Volleyball Arena",
+        "Rio Olympic Velodrome",
+        "Maria Lenk Aquatics Centre",
+        "Olympic Equestrian Centre"
+    ],
+    countriesParticipating: [
+        "USA",
+        "Anti-USA"
     ]
 };
 

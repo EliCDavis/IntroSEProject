@@ -15,6 +15,8 @@ function getDatabase() {
         databaseInstance.eventDays = loadAllEventDays();
         
         databaseInstance.users = loadAllUsers();
+        
+        databaseInstance.eventTypes = databaseStore.eventTypes;
 
     }
 
@@ -48,6 +50,13 @@ function Database() {
      * Array of all users
      */
     self.users = [];
+    
+    
+    /**
+     * Different kinds of events that can take place, such as Archery, or
+     * Autographing Sessions
+     */
+    self.eventTypes = [];
 
 
     /**
@@ -165,6 +174,24 @@ function Database() {
         return null;
     };
     
+    self.getUserByID = function(id){
+        
+        //Iterate through all users
+        for(var i = 0; i < self.getUsers().length; i ++){
+            
+            //if we found the user that matches username and password
+            if(self.getUsers()[i].id === id ){
+                
+                return self.getUsers()[i];
+                
+            }
+            
+        }
+        
+        return null;
+        
+    }
+    
     /*
      * Sends a request to a manager in the database.
      * 
@@ -192,6 +219,23 @@ function Database() {
         
         self.notifications.push(notification);
         
+    };
+    
+    self.getAllAvailableAthlete = function(){
+        
+        var athletes = [];
+        
+        for(var i = 0; i < self.getUsers().length; i ++){
+            
+            if(self.getUsers()[i].constructor.name === "Athlete"){
+                
+                athletes.push(self.getUsers()[i]);
+                
+            }
+            
+        }
+        
+        return athletes;
     };
 
 }
@@ -229,6 +273,11 @@ function Event() {
      * array of athlete IDs that define who are going to the event
      */
     self.athletes = [];
+    
+    /*
+     * Cost of attending the event.
+     */
+    self.price = 0;
 
 }
 

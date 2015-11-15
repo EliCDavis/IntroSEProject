@@ -191,14 +191,25 @@ and open the template in the editor.
                         <b>Location: </b><span data-bind="text: eventBeingDisplayed().location()"></span><br />
 
                         <b>Time: </b><span data-bind="text: eventBeingDisplayed().startTime()"></span><br />
-                        <b>Price: </b> 80$<br />
+                        <b>Price: </b> <span data-bind="text: eventBeingDisplayed().price"></span><br />
 
                         <br />
 
                         <b>Athletes: </b><br />
 
-                        <div data-bind="foreach: eventBeingDisplayed().athletes">
-                            
+                        <div style="overflow:auto; max-height:150px;">
+                            <table class="table table-hover" data-bind="foreach: athletesInEventView" width="100%" >
+                                <tr>
+                                    <td style="min-width: 10px">
+                                        <button type="button" class="btn btn-default btn-xs"  >
+                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true" data-bind="click: $parent.displayAthleteBio"></span>
+                                        </button>
+                                    </td>
+                                    <td style="min-width: 10px" data-bind="text: name"></td>
+                                    <td style="min-width: 10px" data-bind="text: sport"></td> 
+                                    <td style="min-width: 10px" data-bind="text: country"></td> 
+                                 </tr>
+                            </table>
                         </div>
                         
                         <br />
@@ -298,39 +309,55 @@ and open the template in the editor.
                     </div>
                     
                     
-                    
-                    
-                    
                     <div data-bind="if: sideViewType() === 'EventCreation'">
                         
                         <h1>Create Event</h1>
 
                         <b>Sport</b><br/>
-                        <select id='sportCreation' class="form-control">
-                            <option>Archery</option>
-                            <option>Basketball</option>
-                            <option>Beach Volleyball</option>
-                            <option>Cycling</option>
-                            <option>Diving</option>
-                            <option>Equestrian</option>
-                            <option>Fencing</option>
-                            <option>Football</option>
-                            <option>Gymnastics</option>
-                            <option>Hockey</option>
-                            <option>Swimming</option>
-                            <option>Tennis</option>
-                            <option>Triathlon</option>
-                            <option>Weightlifting</option>
-                        </select>
+                        <select id='sportCreation' class="form-control" data-bind="options: eventTypes"></select>
 
                         <br />
                         <b>Location</b>
-                        <select id='locationCreation' class='form-control'>
-                            <option>Olympic Stadium</option>
-                        </select>
+                        <select id='locationCreation' class='form-control' data-bind="options: eventLocations"></select>
 
                         <br />
-                        <h3>Athletes</h3>
+                        <h3>Athletes Participating</h3>
+                        <div style="overflow:auto; max-height:150px;">
+                            <table class="table table-hover" data-bind="foreach: athletesAddedToEventCreation" width="100%" >
+                                <tr>
+                                    <td style="min-width: 10px">
+                                        <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.removeAthleteFromEventCreation">
+                                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                        </button>
+                                    </td>
+                                    <td style="min-width: 10px" data-bind="text: name"></td>
+                                    <td style="min-width: 10px" data-bind="text: sport"></td> 
+                                    <td style="min-width: 10px" data-bind="text: country"></td> 
+                                 </tr>
+                            </table>
+                        </div>
+                        
+                        <br />
+                        
+                        <h3>Athlete Directory</h3>
+                        <!--<input type="text" class="form-control" id="athleteDirectorSearchEventCreation">-->
+                        <div style="overflow:auto; max-height:150px;">
+                            <table  width="100%" >
+                                <tbody id="athleteDirectoryEventCreation" class="table table-hover" data-bind="foreach: allAthletes">
+                                    <tr>
+                                        <td style="min-width: 10px">
+                                            <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.addAthleteToEventCreation">
+                                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                            </button>
+                                        </td>
+                                        <td style="min-width: 10px" data-bind="text: name"></td>
+                                        <td style="min-width: 10px" data-bind="text: sport"></td> 
+                                        <td style="min-width: 10px" data-bind="text: country"></td> 
+                                    </tr>
+                                </tbody>
+                                
+                            </table>
+                        </div>
                         
                         <br />
                         
@@ -509,6 +536,8 @@ and open the template in the editor.
         
         <script>
             
+            
+            
             var drake;
             
             initialize();
@@ -567,6 +596,16 @@ and open the template in the editor.
                 var event = new Event();
                 event.sport(document.getElementById("sportCreation").value);
                 event.location(document.getElementById("locationCreation").value);
+                
+                event.price = 80;
+                
+                if(event.sport() === "Awards" || event.sport() === "Autographing"){
+                    event.price = 0;
+                }
+                
+                for(var i = 0; i < pageView.athletesAddedToEventCreation().length; i ++){
+                    event.athletes.push(pageView.athletesAddedToEventCreation()[i].id);
+                }
                 
                 var database = getDatabase();
                 database.events.push(event);
