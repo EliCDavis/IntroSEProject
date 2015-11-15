@@ -59,10 +59,11 @@ and open the template in the editor.
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    
                     <ul class="nav navbar-nav">
                         
-                        <li><a href="#">Home <span class="sr-only">(current)</span></a></li>
-                        <li><a href="#">Schedule</a></li>
+                        <li><a href="#" data-bind="click: displayHomeView">Home <span class="sr-only">(current)</span></a></li>
+                        <li><a href="#" data-bind="click:displayCallenderView">Schedule</a></li>
                         
                     </ul>
                     
@@ -109,13 +110,25 @@ and open the template in the editor.
         <div class="row">
 
             <div class="col-sm-9">
-                <div style="overflow:auto; width: 100%;">
-                    <table >
-                        <tr id="eventDays" >
+                
+                <div data-bind="if: mainViewType() === 'Callender'">
+                    
+                    <div style="overflow:auto; width: 100%;">
+                        <table >
+                            <tr id="eventDays" >
 
-                        </tr>
-                    </table>
+                            </tr>
+                        </table>
+                    </div>
+                    
                 </div>
+                
+                <div data-bind="if: mainViewType() === 'Home'">
+                    
+                    <h1>Welcome to Rio 2016!</h1>
+                    
+                </div>
+                
             </div>
 
             <div class="col-sm-3">
@@ -536,17 +549,37 @@ and open the template in the editor.
         
         <script>
             
+            var drake = dragula([]).on('drop', function (el) {
+                
+                var event = getDatabase().grabEventByID(el.id);
+                
+                if(event === null){
+                    alert("Draggin around null event!!");
+                    return;
+                }
+                
+                var time = el.parentElement.id.split("|")[0];
+                
+                var eventDay = getDatabase().grabEventDayByID(el.parentElement.id.split("|")[1]);
+                
+                event.startTime(time);
+                
+                //remove this event from previous eventDay
+                if(event.eventDay !== "" && getDatabase().grabEventDayByID(event.eventDay) !== null){
+                    getDatabase().grabEventDayByID(event.eventDay).removeEvent(event);
+                } 
+                
+                
+                eventDay.events.push(event.id);
+                
+                event.eventDay = eventDay.id;
+                
+            });
             
-            
-            var drake;
-            
-            initialize();
             
             function initialize(){
                 
                 database = getDatabase();
-                
-                var dragulaSpaces = [];
                 
                 for(var i = 0; i < database.getEventDays().length; i ++){
                     
@@ -567,27 +600,46 @@ and open the template in the editor.
                     ele.appendChild(heading);
                     ele.appendChild(body);
                     
+                    //from 9AM to 11PM
                     for(var t = 9; t <= 23; t ++){
                         
                         var timeSlot = document.createElement("div");
                         timeSlot.innerHTML = "<h5 style='margin:5px'>"+t+":00</h5><hr style='margin-top:5px'>";
                         
                         var eventSpace = document.createElement("div");
-                        eventSpace.style.minHeight = "5px";
-//                        eventSpace.innerHTML = "<br />";
-                        
+                        eventSpace.setAttribute("id",t+"|"+database.getEventDays()[i].id);
+                        eventSpace.style.minHeight = "5px";                   
                         
                         body.appendChild(timeSlot);
                         timeSlot.appendChild(eventSpace);
                         
-                        dragulaSpaces.push(eventSpace);
+                        drake.containers.push(eventSpace);
+                        
+                        //add in any events that belong here
+                        for(var e = 0; e < database.getEventDays()[i].events.length; e ++){
+                            
+                            var event = database.grabEventByID( database.getEventDays()[i].events[e] );
+                            
+                            if(event.startTime() === t+""){
+                                
+                                var ele = createEventNode(event.id, event.sport(), event.location());
+                                
+                                if(pageView.isManager()){
+                                    eventSpace.appendChild(ele);
+                                } else {
+                                    timeSlot.appendChild(ele);
+                                }
+                                
+                                
+                            } 
+                            
+                        }
+                        
                     }
+                    
                     
                 }
                 
-                dragulaSpaces.push(document.getElementById('createdEvents'));
-                
-                drake = dragula(dragulaSpaces);
             }
 
             
@@ -610,11 +662,24 @@ and open the template in the editor.
                 var database = getDatabase();
                 database.events.push(event);
                 
-                var ele = document.createElement("div");
-                ele.setAttribute("class", "well well-sm");
-                ele.innerHTML += '<button type="button" onclick="pageView.displayEvent(\''+event.id+'\')" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></button>   ';
-                ele.innerHTML += "<b>"+document.getElementById("sportCreation").value+"</b><br\>"+document.getElementById("locationCreation").value+"<br />";
+                
+                var ele = createEventNode(event.id, document.getElementById("sportCreation").value, document.getElementById("locationCreation").value);
+    
                 document.getElementById("createdEvents").appendChild(ele);
+                
+            }
+            
+            function createEventNode(eventId, sport, location){
+                
+                var ele = document.createElement("div");
+                
+                ele.setAttribute("class", "well well-sm");
+                ele.setAttribute("id", eventId);
+                ele.innerHTML += '<button type="button" onclick="pageView.displayEvent(\''+eventId+'\')" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></button>   ';
+                ele.innerHTML += "<b>"+sport+"</b><br\>"+location+"<br />";
+                //document.getElementById("createdEvents").appendChild(ele);
+                
+                return ele;
                 
             }
             

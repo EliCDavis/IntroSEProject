@@ -190,7 +190,7 @@ function Database() {
         
         return null;
         
-    }
+    };
     
     /*
      * Sends a request to a manager in the database.
@@ -238,6 +238,28 @@ function Database() {
         return athletes;
     };
 
+    self.grabEventByID = function(id){
+        
+        for(var i = 0; i < self.events.length; i ++){
+            if(self.events[i].id === id){
+                return self.events[i];
+            }
+        }
+        
+        return null;
+    };
+    
+    self.grabEventDayByID = function(id){
+        
+        for(var i = 0; i < self.getEventDays().length; i ++){
+            if(self.getEventDays()[i].id === id){
+                return self.getEventDays()[i];
+            }
+        }
+        
+        return null;
+    };
+
 }
 
 function EventDay() {
@@ -248,7 +270,31 @@ function EventDay() {
 
     self.name = "";
 
+    /**
+     * Buncha event ids that belong to eventday
+     */
     self.events = [];
+    
+    /* 
+     * Goes through all our events and removes the appropriate one
+     * 
+     * @param {Event} event
+     * @returns {undefined}
+     */
+    self.removeEvent = function(event){
+        
+        for(var i = 0; i < self.events.length; i ++){
+            
+            // assuming that metching event id's mean same event.
+            if(self.events[i] === event.id){
+                self.events.splice(i, 1);
+                return;
+            }
+            
+        }
+        
+        
+    };
 
 }
 

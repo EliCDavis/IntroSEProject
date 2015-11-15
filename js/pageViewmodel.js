@@ -79,6 +79,7 @@ function PageViewmodel(){
         
         // Show appropriate views for a Manager
         if(user.constructor.name === "Manager"){
+            self.displayCallenderView();
             self.displayEventCreationScreen();
         }
         
@@ -122,6 +123,15 @@ function PageViewmodel(){
     };
     
     
+    self.displayHomeView = function(){
+        self.mainViewType("Home");
+    };
+    
+    self.displayCallenderView = function(){
+        self.mainViewType("Callender");
+        initialize();
+    };
+    
     /**
      * Displays the view for creating a user account.
      * 
@@ -138,6 +148,7 @@ function PageViewmodel(){
      * @returns {undefined}
      */
     self.logOut = function(){
+        self.displayHomeView();
         self.userSignedIn(null);
         self.displayLoginScreen();
     };
