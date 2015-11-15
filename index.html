@@ -27,13 +27,13 @@ and open the template in the editor.
         <script src="js/databaseStore.js"></script>
         
         <style>
-            .horizMod{
+/*            .horizMod{
                 margin-top: 5px;
             }
             .colMod{
                 padding-right: 0px;
                 padding-left: 0px;
-            }
+            }*/
              th, td { 
                 min-width: 200px; 
                 vertical-align: top;
@@ -64,6 +64,7 @@ and open the template in the editor.
                         
                         <li><a href="#" data-bind="click: displayHomeView">Home <span class="sr-only">(current)</span></a></li>
                         <li><a href="#" data-bind="click:displayCallenderView">Schedule</a></li>
+                        <li><a href="#" data-bind="click:displayAthleteDirectory">Athletes</a></li>
                         
                     </ul>
                     
@@ -107,6 +108,8 @@ and open the template in the editor.
             </div><!-- /.container-fluid -->
         </nav>
         
+        <div class="container-fluid">
+        
         <div class="row">
 
             <div class="col-sm-9">
@@ -128,6 +131,28 @@ and open the template in the editor.
                     <h1>Welcome to Rio 2016!</h1>
                     
                 </div>
+                
+                
+                <div data-bind="if: mainViewType() === 'Athlete'">
+                    
+                    <h1>Athlete Directory</h1>
+                    <div style="overflow:auto; max-height:150px;">
+                        <table class="table table-hover" data-bind="foreach: athleteDirectory" width="100%" >
+                            <tr>
+                                <td style="min-width: 10px">
+                                    <button type="button" class="btn btn-default btn-xs"  >
+                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true" data-bind="click: $parent.displayAthleteBio"></span>
+                                    </button>
+                                </td>
+                                <td style="min-width: 10px" data-bind="text: name"></td>
+                                <td style="min-width: 10px" data-bind="text: sport"></td> 
+                                <td style="min-width: 10px" data-bind="text: country"></td> 
+                             </tr>
+                        </table>
+                    </div>
+                    
+                </div>
+                
                 
             </div>
 
@@ -203,7 +228,7 @@ and open the template in the editor.
                         
                         <b>Location: </b><span data-bind="text: eventBeingDisplayed().location()"></span><br />
 
-                        <b>Time: </b><span data-bind="text: eventBeingDisplayed().startTime()"></span><br />
+                        <b>Time: </b><span data-bind="text: eventBeingDisplayed().startTime()"></span>:00<br />
                         <b>Price: </b> <span data-bind="text: eventBeingDisplayed().price"></span><br />
 
                         <br />
@@ -227,7 +252,11 @@ and open the template in the editor.
                         
                         <br />
                         
-                        <button class="btn btn-primary" onclick="pageView.purchaseEventTicket()">Purchase Ticket</button>
+                        <span data-bind="if: isGeneric">
+                            <span data-bind="with: eventBeingDisplayed">
+                                <button class="btn btn-primary" data-bind="click: $parent.purchaseEventTicket" >Purchase Ticket</button>
+                            </span>
+                        </span>
                         
                     </div>
                     
@@ -242,7 +271,6 @@ and open the template in the editor.
                         
                         <h3>Unread</h3>
                         <div data-bind="foreach: notifications">
-                        
                             
                             <div data-bind="if: read() === false">
 
@@ -544,6 +572,7 @@ and open the template in the editor.
             </div>
             
         </div>
+        </div>
         
         <script src="js/pageViewmodel.js"></script>
         
@@ -573,6 +602,8 @@ and open the template in the editor.
                 eventDay.events.push(event.id);
                 
                 event.eventDay = eventDay.id;
+                
+                getDatabase().notifyUsersOfEventChange(event.id);
                 
             });
             
@@ -624,12 +655,13 @@ and open the template in the editor.
                                 
                                 var ele = createEventNode(event.id, event.sport(), event.location());
                                 
+                                //being added to event space allows the user to drag it.
+                                //adding to time slot it's unablel to be dragged
                                 if(pageView.isManager()){
                                     eventSpace.appendChild(ele);
                                 } else {
                                     timeSlot.appendChild(ele);
                                 }
-                                
                                 
                             } 
                             
@@ -673,7 +705,15 @@ and open the template in the editor.
                 
                 var ele = document.createElement("div");
                 
-                ele.setAttribute("class", "well well-sm");
+                var classNode = "alert alert-warning";
+                
+                if(pageView.isGeneric()){
+                    if(pageView.userSignedIn().hasTicketToEvent(eventId)){
+                        classNode = "alert alert-success";
+                    }
+                }
+                
+                ele.setAttribute("class", classNode);
                 ele.setAttribute("id", eventId);
                 ele.innerHTML += '<button type="button" onclick="pageView.displayEvent(\''+eventId+'\')" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></button>   ';
                 ele.innerHTML += "<b>"+sport+"</b><br\>"+location+"<br />";

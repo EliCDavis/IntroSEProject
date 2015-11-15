@@ -13,6 +13,14 @@ function PageViewmodel(){
     
     self.eventLocations = ko.observableArray(databaseStore.locations);
     
+    /*
+     * This should never change
+     */
+    self.athleteDirectory = ko.observableArray(getDatabase().getAllAvailableAthlete());
+    
+    /*
+     * This changes based on the event we're building
+     */
     self.allAthletes = ko.observableArray(getDatabase().getAllAvailableAthlete());
     
     self.userSignedIn = ko.observable(null);
@@ -21,7 +29,7 @@ function PageViewmodel(){
      * The type of view that is being displayed in the side bar currentely
      * 
      * Can be type:
-     * Home, Callender
+     * Home, Callender, Athletes
      */
     self.mainViewType = ko.observable("Home");
     
@@ -74,6 +82,7 @@ function PageViewmodel(){
         
         // Show appropriate views for a Generic User
         if(user.constructor.name === "GenericUser"){
+            self.displayCallenderView();
             self.displayNotificationsScreen();
         }
         
@@ -128,8 +137,17 @@ function PageViewmodel(){
     };
     
     self.displayCallenderView = function(){
+        
+        if(self.mainViewType() === "Callender"){
+            return;
+        }
+        
         self.mainViewType("Callender");
         initialize();
+    };
+    
+    self.displayAthleteDirectory = function(){
+        self.mainViewType("Athlete");
     };
     
     /**
@@ -140,6 +158,7 @@ function PageViewmodel(){
     self.displayAccountCreation = function(){
         self.sideViewType("AccountCreation");
     };
+    
     
     
     /**
@@ -319,6 +338,21 @@ function PageViewmodel(){
         
     });
     
+    /**
+     * Ko computed function that returns true if the user currentely signed in
+     * is a generic user
+     * 
+     */
+    self.isGeneric = ko.computed(function(){
+        
+        if(self.userSignedIn() !== null && self.userSignedIn().constructor.name === "GenericUser"){
+            return true;
+        }
+        
+        return false;
+        
+    });
+    
     
     self.saveAthleteBioInfo = function(){
         
@@ -386,9 +420,17 @@ function PageViewmodel(){
     };
     
     
-    self.purchaseEventTicket = function(){
+    self.purchaseEventTicket = function(event){
+
+        console.log(event);
         
-        alert("ELI COMPLETE THIS");
+        if(self.isGeneric()){
+            self.userSignedIn().ticketsBought.push(event.id);
+            
+            //refresh the view, quick and easy way :3
+            self.displayHomeView();
+            self.displayCallenderView();
+        }
         
     };
     

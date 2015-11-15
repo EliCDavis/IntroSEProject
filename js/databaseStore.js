@@ -19,7 +19,9 @@ var databaseStore = {
             userName: "dude",
             password: "pw",
             name: "Eli Davis",
-            ticketsOwned : []
+            ticketsOwned : [
+                "5347bd1e-f62f-4e02-9b54-80a9f6861648"
+            ]
         },
         {
             id: "e44dee1f-e079-4351-b3cf-651885225a92",
@@ -42,7 +44,7 @@ var databaseStore = {
             password: "pw",
             name: "Anti Phelps",
             ticketsOwned : [],
-            bio: "Not Not Micheal Phelps",
+            bio: "Not Micheal Phelps",
             picUrl: "https://lgoogoogaga.files.wordpress.com/2012/07/michael-phelps2.jpg",
             dateOfBirth: "1985-06-30",
             gender: "Male",
@@ -74,71 +76,117 @@ var databaseStore = {
     eventDays: [
         {
             id: "f877aa68-fa6d-4423-842a-4e6e89fc4dd6",
-            name: "Start Day"  
+            name: "Start Day",
+            events: [
+                {
+                    id: "05f73175-de2f-4a48-ba78-409857fbeae9",
+                    location: "Olympic Stadium",
+                    time: "9",
+                    type: "Swimming",
+                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"]
+                },
+                {
+                    id: "6554e7ab-a704-4399-a8df-34b323e0e863",
+                    location: "Olympic Stadium",
+                    time: "9",
+                    type: "Swimming",
+                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"]
+                },
+                {
+                    id: "952cb810-d41c-4c30-9768-b2ff80017e6a",
+                    location: "Olympic Stadium",
+                    time: "10",
+                    type: "Swimming",
+                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"]
+                },
+                {
+                    id: "5347bd1e-f62f-4e02-9b54-80a9f6861648",
+                    location: "Olympic Stadium",
+                    time: "10",
+                    type: "Swimming",
+                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"]
+                }
+            ]
         },
         {
             id: "46262218-1061-4f9a-903d-327d1aa52841",
-            name: "August 6" 
+            name: "August 6" ,
+            events: []
         },
         {
             id: "da29b1e2-d588-4894-a5d0-559fbd373769",
-            name: "August 7"  
+            name: "August 7" ,
+            events: [] 
         },
         {
             id: "d8f7d608-d0ce-4a69-9b0c-e0b9feae2878",
-            name: "August 8"  
+            name: "August 8" ,
+            events: [] 
         },
         {
             id: "4ae8023c-2fc6-4b83-ac8c-24ee18cd3b7c",
-            name: "August 9"  
+            name: "August 9"  ,
+            events: []
         },
         {
             id: "80877917-ea7b-417f-b70f-72f41d5d72cf",
-            name: "August 10"  
+            name: "August 10"  ,
+            events: []
         },
         {
             id: "a4e5ad87-9996-423c-a7fc-3ac8b5a5ed1a",
-            name: "August 11"  
+            name: "August 11"  ,
+            events: []
         },
         {
             id: "1ede224a-8dd3-411a-b933-34c6e46336a7",
-            name: "August 12"  
+            name: "August 12"  ,
+            events: []
         },
         {
             id: "8970c61b-a851-4eea-8fb8-a66c0f938c47",
-            name: "August 13"  
+            name: "August 13"  ,
+            events: []
         },
         {
             id: "9facbaab-b617-433e-bad7-e5ce72493450",
-            name: "August 14"  
+            name: "August 14"  ,
+            events: []
         },
         {
             id: "a1947c22-f34e-45aa-bfa4-1cbed42e8394",
-            name: "August 15"  
+            name: "August 15"  ,
+            events: []
         },
         {
             id: "732977e5-4aec-43c1-b802-01382328ddbd",
-            name: "August 16"  
+            name: "August 16"  ,
+            events: []
         },
         {
             id: "90d7d06e-6ca9-4dc6-b8cd-e8453f86eb2d",
-            name: "August 17"  
+            name: "August 17"  ,
+            events: []
         },
         {
             id: "8edd0947-9cd7-48fa-a7c2-a81b3979cfc5",
-            name: "August 18"  
+            name: "August 18"  ,
+            events: []
         },
         {
             id: "edde8eae-4ca5-4f5b-9ad0-52f113c4f27b",
-            name: "August 19"  
+            name: "August 19"  ,
+            events: []
         },
         {
             id: "a8fee7fe-f7c4-46ce-8936-0b934d52d0cc",
-            name: "August 20"  
+            name: "August 20"  ,
+            events: []
         },
         {
             id: "95188bfa-7583-46c3-ad67-26f9522e422a",
-            name: "Final Day"  
+            name: "Final Day"  ,
+            events: []
         }
     ],
     eventTypes: [
@@ -170,24 +218,63 @@ var databaseStore = {
     ],
     countriesParticipating: [
         "USA",
-        "Anti-USA"
+        "Anti-USA",
+        "Rio",
+        "Not Paris"
     ]
 };
 
 function loadAllEventDays(){
     
     var days = [];
+    var events = [];
     
     for(var i = 0; i < databaseStore.eventDays.length; i ++){
         
         var eventDay = new EventDay();
         eventDay.name = databaseStore.eventDays[i].name;
         
+        for(var e = 0; e < databaseStore.eventDays[i].events.length; e ++){
+            var event = loadEvent(databaseStore.eventDays[i].events[e]);
+            eventDay.events.push(event.id);
+            event.eventDay = eventDay.id;
+            
+            events.push(event);
+        }
+        
         days.push(eventDay);
         
     }
     
-    return days;
+    return [days, events];
+    
+}
+
+function loadEvent(json){
+    
+//    {
+//        id: "05f73175-de2f-4a48-ba78-409857fbeae9",
+//        location: "Olympic Stadium",
+//        time: "9",
+//        type: "Fencing",
+//        athletes: []
+//    }
+    
+    var event = new Event();
+    
+    event.id = json.id;
+    event.athletes = json.athletes;
+    event.location(json.location);
+    event.startTime(json.time);
+    event.sport(json.type);
+    
+    event.price = 80;
+                
+    if(event.sport() === "Awards" || event.sport() === "Autographing"){
+        event.price = 0;
+    }
+    
+    return event;
     
 }
 

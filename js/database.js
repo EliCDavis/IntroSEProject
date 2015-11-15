@@ -12,7 +12,11 @@ function getDatabase() {
 
         databaseInstance = new Database();
         
-        databaseInstance.eventDays = loadAllEventDays();
+        var daysAndEvents = loadAllEventDays();
+        
+        databaseInstance.eventDays = daysAndEvents[0];
+        
+        databaseInstance.events = daysAndEvents[1];
         
         databaseInstance.users = loadAllUsers();
         
@@ -260,6 +264,30 @@ function Database() {
         return null;
     };
 
+    self.notifyUsersOfEventChange = function(eventID){
+        
+        for(var i = 0; i < self.users.length; i ++){
+            
+            if(self.users[i].hasTicketToEvent(eventID)){
+                
+                var event = self.grabEventByID(eventID);
+                var eventDay = self.grabEventDayByID(event.eventDay);
+                
+                var notification = new Notification();
+                
+                var message = "The "+event.sport()+" event in the "+event.location()+" has been changed to start on "+event.startTime()+":00 on "+eventDay.name+".";
+                
+                notification.toID = self.users[i].id;
+                notification.message(message);
+                
+                self.notifications.push(notification);
+                
+            }
+            
+        }
+        
+    };
+
 }
 
 function EventDay() {
@@ -404,6 +432,30 @@ function AbstractUser() {
      */
     self.id = generateUUID();
 
+    /**
+     * Array of uuid's that corresponds an event's uuid.
+     */
+    self.ticketsBought = [];
+    
+    /*
+     * Checks if this user has a ticket to a certain event.
+     * 
+     * @param {String} eventID
+     * @returns {Boolean}
+     */
+    self.hasTicketToEvent = function(eventID){
+        
+        for(var i = 0; i < self.ticketsBought.length; i++){
+            
+            if(self.ticketsBought[i] === eventID){
+                return true;
+            }
+            
+        }
+        
+        return false;
+    };
+
 }
 
 
@@ -417,11 +469,6 @@ function GenericUser() {
     AbstractUser.apply(this, arguments);
 
     var self = this;
-
-    /**
-     * Array of uuid's that corresponds an event's uuid.
-     */
-    self.ticketsBought = [];
 
 }
 
