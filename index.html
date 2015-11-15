@@ -596,7 +596,7 @@ and open the template in the editor.
                 
                 var classNode = "alert alert-warning";
                 
-                if(pageView.userSignedIn().hasTicketToEvent(eventId)){
+                if(pageView.userSignedIn() !== null && pageView.userSignedIn().hasTicketToEvent(eventId)){
                     classNode = "alert alert-success";
                 }
                 
