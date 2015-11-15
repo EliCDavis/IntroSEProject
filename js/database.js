@@ -71,6 +71,7 @@ function Database() {
         return self.users;
     };
 
+
     /**
      * All notifications created currentely stored in the database
      */
@@ -242,6 +243,11 @@ function Database() {
         return athletes;
     };
 
+    /*
+     * 
+     * @param {type} id
+     * @returns {Event}
+     */
     self.grabEventByID = function(id){
         
         for(var i = 0; i < self.events.length; i ++){
@@ -285,6 +291,47 @@ function Database() {
             }
             
         }
+        
+    };
+    
+    /*
+     * 
+     * @param {int} time
+     * @param {String} dayId
+     * @returns {Array}
+     */
+    self.getAvailableGuardsAtTimeAndDay = function(time, dayId){
+        
+        var guards = [];
+        
+        //go through all our
+        for(var i = 0; i < self.users.length; i ++){
+            
+            //If this user is a guard,
+            if(self.users[i].constructor.name === "Guard"){
+                
+                var busy = false;
+                
+                for(var e = 0; e < self.users[i].eventsAssignedTo.length; e ++){
+                    var event = self.grabEventByID(self.users[i].eventsAssignedTo[e]);
+                    
+                    if(event.startTime() === time + "" && event.eventDay === dayId){
+                        busy = true;
+                    } else {
+                        console.log(event.startTime(),  time);
+                    }
+                    
+                }
+                
+                if(!busy){
+                    guards.push(self.users[i]); 
+                }
+                
+            }
+            
+        }
+        
+        return guards;
         
     };
 
@@ -349,9 +396,24 @@ function Event() {
     self.athletes = [];
     
     /*
+     * Array of guard Id's who's assigned to protect the event
+     */
+    self.guards = [];
+    
+    /*
      * Cost of attending the event.
      */
     self.price = 0;
+    
+    
+    self.removeGuard = function(guardId){
+        for(var i = 0; i < self.guards.length; i ++){
+            if(self.guards[i] === guardId){
+                self.guards.splice(i, 1);
+                return;
+            }
+        }
+    };
 
 }
 

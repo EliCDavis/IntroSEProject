@@ -63,7 +63,24 @@ var databaseStore = {
             type: "Security",
             userName: "sec",
             password: "pw",
-            name: "Security Dude"
+            name: "Security Dude 1",
+            assigned: ["952cb810-d41c-4c30-9768-b2ff80017e6a"]
+        },
+        {
+            id: "8534e352-3388-4cd5-a4be-611295f01909",
+            type: "Security",
+            userName: "sec2",
+            password: "pw",
+            name: "Security Dude 2",
+            assigned: []
+        },
+        {
+            id: "2f685cd1-c97e-40d1-a9be-1c3861c09b4f",
+            type: "Security",
+            userName: "sec3",
+            password: "pw",
+            name: "Security Dude 3",
+            assigned: []
         },
         {
             id: "9eb71fa3-d7f3-446b-96e7-0f445b995032",
@@ -83,28 +100,32 @@ var databaseStore = {
                     location: "Olympic Stadium",
                     time: "9",
                     type: "Swimming",
-                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"]
+                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"],
+                    guards: []
                 },
                 {
                     id: "6554e7ab-a704-4399-a8df-34b323e0e863",
                     location: "Olympic Stadium",
                     time: "9",
                     type: "Swimming",
-                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"]
+                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"],
+                    guards: []
                 },
                 {
                     id: "952cb810-d41c-4c30-9768-b2ff80017e6a",
                     location: "Olympic Stadium",
                     time: "10",
                     type: "Swimming",
-                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"]
+                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"],
+                    guards: ["31ee35d3-e1e2-4083-922a-7d005d82f210"]
                 },
                 {
                     id: "5347bd1e-f62f-4e02-9b54-80a9f6861648",
                     location: "Olympic Stadium",
                     time: "10",
                     type: "Swimming",
-                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"]
+                    athletes: ["e44dee1f-e079-4351-b3cf-651885225a92"],
+                    guards: []
                 }
             ]
         },
@@ -252,18 +273,11 @@ function loadAllEventDays(){
 
 function loadEvent(json){
     
-//    {
-//        id: "05f73175-de2f-4a48-ba78-409857fbeae9",
-//        location: "Olympic Stadium",
-//        time: "9",
-//        type: "Fencing",
-//        athletes: []
-//    }
-    
     var event = new Event();
     
     event.id = json.id;
     event.athletes = json.athletes;
+    event.guards = json.guards;
     event.location(json.location);
     event.startTime(json.time);
     event.sport(json.type);
@@ -309,6 +323,7 @@ function loadAllUsers(){
         
         if(databaseStore.users[i].type === "Security"){
             user = new Guard();
+            user.eventsAssignedTo = databaseStore.users[i].assigned;
         }
         
         if(databaseStore.users[i].type === "SecurityManager"){

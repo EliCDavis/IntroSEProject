@@ -39,7 +39,7 @@ function PageViewmodel(){
      * 
      * Can be type:
      * Login, Notifications, EventCreation, AthleteBioEdit, AthleteBio, 
-     * RequestAutoSession, ViewEvent
+     * RequestAutoSession, ViewEvent, AssignGuards
      */
     self.sideViewType = ko.observable("Login");
     
@@ -80,15 +80,17 @@ function PageViewmodel(){
         
         self.userSignedIn(user);
         
+        self.displayCallenderView();
+        
+        self.displayNotificationsScreen();
+        
         // Show appropriate views for a Generic User
         if(user.constructor.name === "GenericUser"){
-            self.displayCallenderView();
             self.displayNotificationsScreen();
         }
         
         // Show appropriate views for a Manager
         if(user.constructor.name === "Manager"){
-            self.displayCallenderView();
             self.displayEventCreationScreen();
         }
         
@@ -160,6 +162,72 @@ function PageViewmodel(){
     };
     
     
+    //--------------------------GuardAssigning Shit-------------------------
+    self.eventToAssignGuardsTo = ko.observable(null);
+    
+    self.availableGuards = ko.observableArray();
+    
+    self.assignedGuards = ko.observableArray();
+    
+    self.displayAssignGuardsScreen = function(eventID){
+        self.sideViewType("AssignGuards");
+        
+        
+        var event = getDatabase().grabEventByID(eventID);
+        
+        self.assignedGuards([]);
+        for(var i = 0; i < event.guards.length; i ++){
+            self.assignedGuards.push(  getDatabase().getUserByID(event.guards[i]) );
+        }
+        
+        self.eventToAssignGuardsTo(event);
+        self.availableGuards( 
+            getDatabase().getAvailableGuardsAtTimeAndDay(event.startTime(), event.eventDay)
+        );
+    };
+    
+    self.addGuardToEvent = function(guard){
+        self.assignedGuards.push(guard);
+        self.availableGuards.remove(guard);
+        
+        self.eventToAssignGuardsTo().guards.push(guard.id);
+        guard.eventsAssignedTo.push(self.eventToAssignGuardsTo().id);
+        
+        self.displayHomeView();
+        self.displayCallenderView();
+        
+        var notification = new Notification();
+        notification.message("You have been assigned to the event of "+
+                self.eventToAssignGuardsTo().sport()+" in the "+
+                self.eventToAssignGuardsTo().location()+" at "+
+                self.eventToAssignGuardsTo().startTime());
+        notification.fromID = self.userSignedIn().id;
+        notification.toID = guard.id;
+        getDatabase().notifications.push(notification);
+        
+    };
+    
+    self.removeGuardFromEvent = function(guard){
+        self.assignedGuards.remove(guard);
+        self.availableGuards.push(guard);
+        
+        guard.removeEventFromGuard(self.eventToAssignGuardsTo().id);
+        self.eventToAssignGuardsTo().removeGuard(guard.id);
+        
+        self.displayHomeView();
+        self.displayCallenderView();
+        var notification = new Notification();
+        notification.message("You have been removed from the event of "+
+                self.eventToAssignGuardsTo().sport()+" in the "+
+                self.eventToAssignGuardsTo().location()+" at "+
+                self.eventToAssignGuardsTo().startTime());
+        notification.fromID = self.userSignedIn().id;
+        notification.toID = guard.id;
+        getDatabase().notifications.push(notification);
+    };
+    
+    //-----------------------------------------------------------------------
+    
     
     /**
      * Set's the  user signed in to null and display the log in screen.
@@ -221,43 +289,6 @@ function PageViewmodel(){
         //Add container to dragula for dragging.
         drake.containers.push(document.getElementById('createdEvents'));
 
-        
-//        $("#athleteDirectorSearchEventCreation").keyup(function () {
-//            //split the current value of searchInput
-//            var data = this.value.split(" ");
-//            //create a jquery object of the rows
-//            var jo = $("#athleteDirectoryEventCreation").find("tr");
-//            if (this.value == "") {
-//                jo.show();
-//                return;
-//            }
-//            //hide all the rows
-//            jo.hide();
-//
-//            //Recusively filter the jquery object to get results.
-//            jo.filter(function (i, v) {
-//                var $t = $(this);
-//                console.log($t);
-//                for (var d = 0; d < data.length; ++d) {
-//                    
-//                    if ($t.is(":contains('" + data[d] + "')")) {
-//                        return true;
-//                    }
-//                }
-//                return false;
-//            })
-//                    //show the rows that match.
-//                    .show();
-//        }).focus(function () {
-//            this.value = "";
-//            $(this).css({
-//                "color": "black"
-//            });
-//            $(this).unbind('focus');
-//        }).css({
-//            "color": "#C0C0C0"
-//        });
-        
     };
     
     self.displayAthleteBioEdit = function(){
@@ -282,6 +313,8 @@ function PageViewmodel(){
         
         document.getElementById("athleteBioBio").innerHTML = self.userSignedIn().bio;
         document.getElementById("athleteBioName").innerHTML = self.userSignedIn().name;
+        document.getElementById("athleteBioCountry").innerHTML = self.userSignedIn().country;
+        document.getElementById("athleteBioSport").innerHTML = self.userSignedIn().sport;
         document.getElementById("athleteBioAge").innerHTML = _calculateAge( new Date(self.userSignedIn().dateOfBirth) );
         document.getElementById("athleteBioPic").src = self.userSignedIn().profilePicUrl;
         
@@ -293,6 +326,8 @@ function PageViewmodel(){
         
         document.getElementById("athleteBioBio").innerHTML = athlete.bio;
         document.getElementById("athleteBioName").innerHTML = athlete.name;
+        document.getElementById("athleteBioCountry").innerHTML = athlete.country;
+        document.getElementById("athleteBioSport").innerHTML = athlete.sport;
         document.getElementById("athleteBioAge").innerHTML = _calculateAge( new Date(athlete.dateOfBirth) );
         document.getElementById("athleteBioPic").src = athlete.profilePicUrl;
         
@@ -307,7 +342,6 @@ function PageViewmodel(){
     /**
      * Ko computed function that returns true if the user currentely signed in
      * is a manager
-     * 
      */
     self.isManager = ko.computed(function(){
         
@@ -323,7 +357,6 @@ function PageViewmodel(){
     /**
      * Ko computed function that returns true if the user currentely signed in
      * is a Athlete
-     * 
      */
     self.isAthlete = ko.computed(function(){
         
@@ -351,6 +384,30 @@ function PageViewmodel(){
         
         return false;
         
+    });
+    
+    /**
+     * Ko computed function that returns true if the user currentely signed in
+     * is a SecurityManager
+     */
+    self.isSecurityManager = ko.computed(function(){
+        if(self.userSignedIn() !== null && self.userSignedIn().constructor.name === "SecurityManager"){
+            return true;
+        }
+        
+        return false;
+    });
+    
+    /**
+     * Ko computed function that returns true if the user currentely signed in
+     * is a Guard
+     */
+    self.isGuard = ko.computed(function(){
+        if(self.userSignedIn() !== null && self.userSignedIn().constructor.name === "Guard"){
+            return true;
+        }
+        
+        return false;
     });
     
     
@@ -399,7 +456,9 @@ function PageViewmodel(){
     
     self.eventBeingDisplayed = ko.observable(null);
     
+    
     self.athletesInEventView = ko.observableArray();
+    
     
     self.displayEvent = function(eventID){
         
@@ -427,12 +486,43 @@ function PageViewmodel(){
         if(self.isGeneric()){
             self.userSignedIn().ticketsBought.push(event.id);
             
+            
+            self.displayEvent(event.id);
+            
             //refresh the view, quick and easy way :3
             self.displayHomeView();
             self.displayCallenderView();
         }
         
     };
+    
+    self.ableToPurchaseTicket = ko.computed(function(){
+        
+        if(self.isGeneric() || self.isAthlete() || self.isGuard()){
+            
+            if(self.eventBeingDisplayed() === null){
+                return false;
+            }
+            
+            if(self.isGuard()){
+                
+                for(var i = 0; i < self.userSignedIn().eventsAssignedTo.length; i ++){
+                    if(self.userSignedIn().eventsAssignedTo[i] === self.eventBeingDisplayed().id){
+                        return false;
+                    }
+                }
+                
+            }
+            
+            if(self.userSignedIn().hasTicketToEvent(self.eventBeingDisplayed().id) === false){
+                return true;
+            }
+            
+        }
+        
+        return false;
+        
+    });
     
 }
 

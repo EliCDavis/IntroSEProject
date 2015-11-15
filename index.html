@@ -211,11 +211,53 @@ and open the template in the editor.
                 
                     <img class="img-rounded" id ='athleteBioPic' align="left" style='margin:5px;width:100%' src="..." alt="Picture of Athlete">
                      
-                    <h4 class="media-heading"><span>Country</span> - <span>Sport</span></h4>
+                    <h4 class="media-heading"><span id="athleteBioCountry">Country</span> - <span id="athleteBioSport">Sport</span></h4>
                             
                     <p id='athleteBioBio'>Bio</p>
                     
                 </div>
+                
+                
+                <div data-bind="if: sideViewType() === 'AssignGuards'">
+                    <h1>Assigning Guards</h1>
+                    
+                    <h3>Assigned</h3>
+                    <div style="overflow:auto; max-height:150px;">
+                        <table  width="100%" class="table table-hover">
+                            <tbody id="athleteDirectoryEventCreation"  data-bind="foreach: assignedGuards">
+                                <tr>
+                                    <td style="min-width: 10px">
+                                        <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.removeGuardFromEvent">
+                                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                        </button>
+                                    </td>
+                                    <td style="min-width: 10px" data-bind="text: name"></td>
+                                    
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                    
+                    <h3>Available</h3>
+                    <div style="overflow:auto; max-height:150px;">
+                        <table  width="100%" class="table table-hover">
+                            <tbody id="athleteDirectoryEventCreation"  data-bind="foreach: availableGuards">
+                                <tr>
+                                    <td style="min-width: 10px">
+                                        <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.addGuardToEvent">
+                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                        </button>
+                                    </td>
+                                    <td style="min-width: 10px" data-bind="text: name"></td>
+                                    
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+                
                 
                 <div data-bind="if: sideViewType() === 'ViewEvent'">
                         
@@ -252,7 +294,7 @@ and open the template in the editor.
                         
                         <br />
                         
-                        <span data-bind="if: isGeneric">
+                        <span data-bind="if: ableToPurchaseTicket">
                             <span data-bind="with: eventBeingDisplayed">
                                 <button class="btn btn-primary" data-bind="click: $parent.purchaseEventTicket" >Purchase Ticket</button>
                             </span>
@@ -287,6 +329,8 @@ and open the template in the editor.
                             
                         </div>
                         
+                        <hr>
+                        
                         <h4>Read</h4>
                         <div data-bind="foreach: notifications">  
                             <div data-bind="if: read">
@@ -316,11 +360,11 @@ and open the template in the editor.
                         <input type="date" class="form-control" id="athleteBdayEdit">
                         <br>
                         
-                        <b>Sport: </b>
+<!--                        <b>Sport: </b>
                         <br>[Insert Sport Dropdown Here]<br><br>
                         
                         <b>Country: </b>
-                        <br>[Insert Country Dropdown Here]<br><br>
+                        <br>[Insert Country Dropdown Here]<br><br>-->
                         
                         <b>Bio:</b>
                         <textarea class="form-control" rows="3" style="resize:vertical;" id="athleteBiotEdit"></textarea>
@@ -412,162 +456,7 @@ and open the template in the editor.
                     </div>
                     
                 </div>
-                
-<!--                <h1>Request Security</h1>
-                <b>Location:</b>
-                <select id='locationCreation' class='form-control'>
-                    <option>Olympic Stadium</option>
-                </select>
-                
-                <br />
-                <b>Reason: </b>
-                <textarea class="form-control" placeholder="Enter reason for security request..."></textarea>
-                <br/>
-                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Request</button>
-                <br />
-                <br />
-                
-                
-                
-                <h1>Request Free Ticket</h1>
-                <b>Event:</b>
-                <select id='locationCreation' class='form-control'>
-                    <option>Archery - 9 a.m. August 6th</option>
-                </select>
-                <br/>
-                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Request</button>
-                <br />
-                <br />
-                
-                
-                <h1>Purchase Ticket</h1>
-                <b>Event:</b>
-                <select id='locationCreation' class='form-control'>
-                    <option>90$ - Archery - 9 a.m. August 6th</option>
-                </select>
-                <br/>
-                
-                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Purchase</button>
-                <br />
-                <br />
-                
-                
-                <h1>Notifications</h1>
-                <div class="alert alert-warning alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>Request!</strong> An Athlete has requested an autographing session at 13:00 in the Stadium.
-                </div>
-                <div class="alert alert-warning alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>Event Change!</strong> Archery event has been moved from x to x.
-                </div>
-                <div class="alert alert-warning alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>Approved!</strong> Your security request has been approved!
-                </div>
-                <br />
-                
-                
-                
-                <h1>Assign Security To Event</h1>
-                
-                <b>Event:</b>
-                <select id='locationCreation' class='form-control'>
-                    <option>Archery - 9 a.m. August 6th</option>
-                </select>
-                <br/>
-                
-                <b>Security:</b>
-                <select id='locationCreation' class='form-control'>
-                    <option>Guard 1</option>
-                </select>
-                <br />
-                
-                <b>Equipment:</b>
-                <select id='locationCreation' class='form-control'>
-                    <option>Gun</option>
-                </select>
-                <br/>
-                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Assign</button>
-                <br />
-                <br />
-                
-                <h1>Request Autographing</h1>
-                <b>Location:</b>
-                <select id='locationCreation' class='form-control'>
-                    <option>Olympic Stadium</option>
-                </select>
-                
-                <br />
-                <b>Date and Time:</b>
-                <input type="date" name="bday">
-                <input type="time" name="usr_time">
-                <br/>
-                <br/>
-                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Request</button>
-                <br />
-                <br />
-                
-                
-                <h1>About You</h1>
-                <b>Birth:</b> <input type="date" name="bday" class="form-control">
-                
-                <br />
-                <b>Name</b>
-                <input class="form-control" placeholder="Name">
-                <br />
-                <b>About You</b>
-                <textarea class="form-control" ></textarea>
-                <br/>
-                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()">Update</button>
-                <br />
-                
-                <br />
-                
-                <h1>Assign Athletes To Event</h1>
-                <b>Event:</b>
-                <select id='locationCreation' class='form-control'>
-                    <option>Archery - 9 a.m. August 6th</option>
-                </select>
-                <br/>
-                <div class="row">
-                    
-                    <div class="col-sm-3">
-                        <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
-                        Athlete
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="#">Another Athlete</a></li>
-                        <li><a href="#">Another Athlete</a></li>
-                        <li><a href="#">Another Athlete</a></li>
-                        <li><a href="#">Another Athlete</a></li>
-                    </ul>
-                </div>
-                    </div>
-                    
-                    <div class="col-sm-9">
-                        <div class="alert alert-warning alert-dismissible" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <strong>Russia</strong> Josh
-                        </div>
-                        <div class="alert alert-warning alert-dismissible" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <strong>West Korea</strong> Jeffery 
-                        </div>
-                        <div class="alert alert-warning alert-dismissible" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <strong>USA</strong> Eli
-                        </div>
-                    </div>
-                    
-                </div>
-                
-                <button class="btn btn-primary btn-lg" onclick="createOlympEvent()" style="width:100%">Update</button>
-                <br />-->
-                
+
                 
             </div>
             
@@ -713,8 +602,42 @@ and open the template in the editor.
                     }
                 }
                 
+                var event = getDatabase().grabEventByID(eventId);
+                
+                if(pageView.isSecurityManager()){
+                    
+                    if(event.guards.length === 0){
+                        classNode = "alert alert-danger";
+                    }
+                }
+                
+                //Highlight an event that the guard has been asigned to
+                if(pageView.isGuard()){
+                    
+                    for(var i = 0; i < event.guards.length; i ++){
+                        if(event.guards[i] === pageView.userSignedIn().id){
+                            classNode = "alert alert-info";
+                        } 
+                    }
+                    
+                }
+                
+                //Highlight an event that the guard has been asigned to
+                if(pageView.isAthlete()){
+                    
+                    for(var i = 0; i < event.athletes.length; i ++){
+                        if(event.athletes[i] === pageView.userSignedIn().id){
+                            classNode = "alert alert-info";
+                        } 
+                    }
+                    
+                }
+                
                 ele.setAttribute("class", classNode);
                 ele.setAttribute("id", eventId);
+                if(pageView.isSecurityManager()){
+                    ele.innerHTML += '<button type="button" onclick="pageView.displayAssignGuardsScreen(\''+eventId+'\')" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></button>   ';
+                }
                 ele.innerHTML += '<button type="button" onclick="pageView.displayEvent(\''+eventId+'\')" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></button>   ';
                 ele.innerHTML += "<b>"+sport+"</b><br\>"+location+"<br />";
                 //document.getElementById("createdEvents").appendChild(ele);
