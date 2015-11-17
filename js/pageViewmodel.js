@@ -80,6 +80,7 @@ function PageViewmodel(){
         
         self.userSignedIn(user);
         
+        self.displayHomeView();
         self.displayCallenderView();
         
         self.displayNotificationsScreen();

@@ -40,7 +40,7 @@ var databaseStore = {
         {
             id: "d560edaf-8b7b-4413-a332-d951fccd9f56",
             type: "Athlete",
-            userName: "athlete",
+            userName: "athlete1",
             password: "pw",
             name: "Anti Phelps",
             ticketsOwned : [],

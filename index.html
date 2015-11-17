@@ -140,8 +140,8 @@ and open the template in the editor.
                         <table class="table table-hover" data-bind="foreach: athleteDirectory" width="100%" >
                             <tr>
                                 <td style="min-width: 10px">
-                                    <button type="button" class="btn btn-default btn-xs"  >
-                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true" data-bind="click: $parent.displayAthleteBio"></span>
+                                    <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.displayAthleteBio" >
+                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true" ></span>
                                     </button>
                                 </td>
                                 <td style="min-width: 10px" data-bind="text: name"></td>
@@ -281,8 +281,8 @@ and open the template in the editor.
                             <table class="table table-hover" data-bind="foreach: athletesInEventView" width="100%" >
                                 <tr>
                                     <td style="min-width: 10px">
-                                        <button type="button" class="btn btn-default btn-xs"  >
-                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true" data-bind="click: $parent.displayAthleteBio"></span>
+                                        <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.displayAthleteBio" >
+                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true" ></span>
                                         </button>
                                     </td>
                                     <td style="min-width: 10px" data-bind="text: name"></td>
