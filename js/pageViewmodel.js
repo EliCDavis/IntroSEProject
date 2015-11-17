@@ -416,7 +416,7 @@ function PageViewmodel(){
         
         if(self.userSignedIn() !== null){
             
-            alert("This needs to be finnished!");
+            alert("Your profile has been updated");
             
             self.userSignedIn().bio = document.getElementById("athleteBiotEdit").value;
             self.userSignedIn().name = document.getElementById("athleteNameEdit").value;
